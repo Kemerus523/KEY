@@ -1,5 +1,6 @@
--- NO MERCY HUB (KEY SYSTEM -> MAIN MENU)
+-- NO MERCY HUB (FULL SYSTEM)
 
+local TweenService = game:GetService("TweenService")
 local UIS = game:GetService("UserInputService")
 
 local KEY = "NOMERCY31"
@@ -28,9 +29,8 @@ local top = Instance.new("Frame", frame)
 top.Size = UDim2.new(1,0,0,30)
 top.BackgroundColor3 = Color3.fromRGB(20,20,20)
 
--- TITLE
 local title = Instance.new("TextLabel", top)
-title.Size = UDim2.new(1,-60,1,0)
+title.Size = UDim2.new(1,-40,1,0)
 title.Position = UDim2.new(0,10,0,0)
 title.BackgroundTransparency = 1
 title.Text = "NO MERCY HUB"
@@ -59,7 +59,7 @@ keyFrame.BackgroundTransparency = 1
 
 local keyTitle = Instance.new("TextLabel", keyFrame)
 keyTitle.Size = UDim2.new(1,0,0,40)
-keyTitle.Position = UDim2.new(0,0,0.15,0)
+keyTitle.Position = UDim2.new(0,0,0.2,0)
 keyTitle.Text = "ENTER KEY"
 keyTitle.BackgroundTransparency = 1
 keyTitle.TextColor3 = Color3.fromRGB(0,255,120)
@@ -68,7 +68,7 @@ keyTitle.TextScaled = true
 
 local box = Instance.new("TextBox", keyFrame)
 box.Size = UDim2.new(0.6,0,0,40)
-box.Position = UDim2.new(0.2,0,0.4,0)
+box.Position = UDim2.new(0.2,0,0.45,0)
 box.PlaceholderText = "Enter Key..."
 box.BackgroundColor3 = Color3.fromRGB(25,25,25)
 box.TextColor3 = Color3.fromRGB(0,255,120)
@@ -76,17 +76,17 @@ Instance.new("UICorner",box)
 
 local verify = Instance.new("TextButton", keyFrame)
 verify.Size = UDim2.new(0.6,0,0,40)
-verify.Position = UDim2.new(0.2,0,0.6,0)
-verify.Text = "VERIFY KEY"
+verify.Position = UDim2.new(0.2,0,0.65,0)
+verify.Text = "VERIFY"
 verify.BackgroundColor3 = Color3.fromRGB(0,170,80)
 verify.TextColor3 = Color3.new(1,1,1)
 Instance.new("UICorner",verify)
 
--- MAIN MENU FRAME
+-- MAIN MENU
 local mainMenu = Instance.new("Frame", content)
 mainMenu.Size = UDim2.new(1,0,1,0)
-mainMenu.BackgroundTransparency = 1
 mainMenu.Visible = false
+mainMenu.BackgroundTransparency = 1
 
 -- TAB BAR
 local tabBar = Instance.new("Frame", mainMenu)
@@ -98,26 +98,38 @@ pages.Size = UDim2.new(1,-120,1,0)
 pages.Position = UDim2.new(0,120,0,0)
 pages.BackgroundTransparency = 1
 
--- CREATE PAGE
+-- PAGE FUNCTION
 local function createPage()
-
 	local page = Instance.new("Frame", pages)
 	page.Size = UDim2.new(1,0,1,0)
 	page.Visible = false
 	page.BackgroundTransparency = 1
-	
 	return page
 end
 
--- CREATE TAB
-local function createTab(name,pos)
+-- TAB FUNCTION
+local function createTab(name,icon,pos)
 
 	local tab = Instance.new("TextButton", tabBar)
-	tab.Size = UDim2.new(1,0,0,40)
-	tab.Position = UDim2.new(0,0,0,(pos-1)*40)
-	tab.Text = name
-	tab.BackgroundColor3 = Color3.fromRGB(0,170,80)
-	tab.TextColor3 = Color3.new(1,1,1)
+	tab.Size = UDim2.new(1,0,0,45)
+	tab.Position = UDim2.new(0,0,0,(pos-1)*45)
+	tab.BackgroundColor3 = Color3.fromRGB(25,25,25)
+	tab.Text = ""
+
+	local img = Instance.new("ImageLabel", tab)
+	img.Size = UDim2.new(0,20,0,20)
+	img.Position = UDim2.new(0,10,0.5,-10)
+	img.BackgroundTransparency = 1
+	img.Image = icon
+
+	local txt = Instance.new("TextLabel", tab)
+	txt.Size = UDim2.new(1,-40,1,0)
+	txt.Position = UDim2.new(0,35,0,0)
+	txt.BackgroundTransparency = 1
+	txt.Text = name
+	txt.TextColor3 = Color3.fromRGB(0,255,120)
+	txt.Font = Enum.Font.GothamBold
+	txt.TextScaled = true
 
 	local page = createPage()
 
@@ -136,29 +148,45 @@ local function createTab(name,pos)
 	return page
 end
 
--- TABS
-local mainPage = createTab("Main",1)
-local teleportPage = createTab("Teleport",2)
-local playerPage = createTab("Player",3)
+-- CREATE TABS
+local mainPage = createTab("Main","rbxassetid://6031280882",1)
+local teleportPage = createTab("Teleport","rbxassetid://6031091004",2)
+local playerPage = createTab("Player","rbxassetid://6031265976",3)
 
 mainPage.Visible = true
 
--- MAIN PAGE TEXT
-local info = Instance.new("TextLabel", mainPage)
-info.Size = UDim2.new(1,0,0,40)
-info.Text = "Welcome To No Mercy Hub"
-info.BackgroundTransparency = 1
-info.TextColor3 = Color3.fromRGB(0,255,120)
-info.Font = Enum.Font.GothamBold
-info.TextScaled = true
+-- CREDITS
+local credits = Instance.new("TextLabel", mainPage)
+credits.Size = UDim2.new(1,0,0,80)
+credits.Position = UDim2.new(0,0,0.3,0)
+credits.BackgroundTransparency = 1
+credits.TextColor3 = Color3.fromRGB(0,255,120)
+credits.Font = Enum.Font.GothamBold
+credits.TextScaled = true
+credits.Text = [[
+NO MERCY HUB
 
--- KEY CHECK
+Script ini dibuat oleh
+KEMERUS
+]]
+
+-- KEY VERIFY
 verify.MouseButton1Click:Connect(function()
 
 	if box.Text == KEY then
 
-		keyFrame.Visible = false
-		mainMenu.Visible = true
+		local tween = TweenService:Create(
+			keyFrame,
+			TweenInfo.new(0.5),
+			{Position = UDim2.new(0,0,1,0)}
+		)
+
+		tween:Play()
+
+		tween.Completed:Connect(function()
+			keyFrame.Visible = false
+			mainMenu.Visible = true
+		end)
 
 	else
 
@@ -168,7 +196,7 @@ verify.MouseButton1Click:Connect(function()
 
 end)
 
--- OPEN
+-- OPEN BUTTON
 open.MouseButton1Click:Connect(function()
 
 	frame.Visible = true
@@ -176,7 +204,7 @@ open.MouseButton1Click:Connect(function()
 
 end)
 
--- CLOSE
+-- CLOSE BUTTON
 close.MouseButton1Click:Connect(function()
 
 	frame.Visible = false
@@ -184,7 +212,7 @@ close.MouseButton1Click:Connect(function()
 
 end)
 
--- DRAG (MOBILE SUPPORT)
+-- DRAG MOBILE
 local dragging
 local dragInput
 local dragStart
