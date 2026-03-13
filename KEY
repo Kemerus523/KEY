@@ -221,7 +221,8 @@ end
 
 -- CREATE TABS
 local mainTab, mainPage = createTab("Main", "🏠", 1)
-local creditsTab, creditsPage = createTab("Credits", "👤", 2)
+local playerTab, playerPage = createTab("Player", "⚡", 2)
+local creditsTab, creditsPage = createTab("Credits", "👤", 3)
 
 -- Activate Main by default
 mainPage.Visible = true
@@ -257,8 +258,239 @@ subText.TextSize = 13
 subText.TextXAlignment = Enum.TextXAlignment.Left
 
 -- ========================
--- CREDITS PAGE
+-- PLAYER PAGE
 -- ========================
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local localPlayer = Players.LocalPlayer
+
+-- State
+local espEnabled = false
+local espHighlights = {}
+local speedEnabled = false
+local defaultSpeed = 16
+local customSpeed = 50
+
+-- Helper: create a toggle button
+local function createToggle(parent, labelText, yPos)
+	local row = Instance.new("Frame", parent)
+	row.Size = UDim2.new(1,-16,0,44)
+	row.Position = UDim2.new(0,8,0,yPos)
+	row.BackgroundColor3 = Color3.fromRGB(232,220,198)
+	row.BorderSizePixel = 0
+	local rowCorner = Instance.new("UICorner", row)
+	rowCorner.CornerRadius = UDim.new(0,8)
+	local rowStroke = Instance.new("UIStroke", row)
+	rowStroke.Color = Color3.fromRGB(195,175,135)
+	rowStroke.Thickness = 1
+
+	local lbl = Instance.new("TextLabel", row)
+	lbl.Size = UDim2.new(0.65,0,1,0)
+	lbl.Position = UDim2.new(0,12,0,0)
+	lbl.Text = labelText
+	lbl.TextColor3 = Color3.fromRGB(70,50,15)
+	lbl.BackgroundTransparency = 1
+	lbl.Font = Enum.Font.GothamBold
+	lbl.TextSize = 13
+	lbl.TextXAlignment = Enum.TextXAlignment.Left
+
+	local btn = Instance.new("TextButton", row)
+	btn.Size = UDim2.new(0,70,0,28)
+	btn.Position = UDim2.new(1,-80,0.5,-14)
+	btn.Text = "OFF"
+	btn.BackgroundColor3 = Color3.fromRGB(195,175,135)
+	btn.TextColor3 = Color3.fromRGB(80,60,20)
+	btn.Font = Enum.Font.GothamBold
+	btn.TextSize = 12
+	btn.BorderSizePixel = 0
+	local btnCorner = Instance.new("UICorner", btn)
+	btnCorner.CornerRadius = UDim.new(0,6)
+
+	return btn
+end
+
+-- Section title
+local playerTitle = Instance.new("TextLabel", playerPage)
+playerTitle.Size = UDim2.new(1,0,0,32)
+playerTitle.BackgroundColor3 = Color3.fromRGB(175,145,90)
+playerTitle.Text = "⚡  PLAYER HACKS"
+playerTitle.TextColor3 = Color3.fromRGB(255,248,230)
+playerTitle.Font = Enum.Font.GothamBold
+playerTitle.TextScaled = true
+playerTitle.BorderSizePixel = 0
+local playerTitleCorner = Instance.new("UICorner", playerTitle)
+playerTitleCorner.CornerRadius = UDim.new(0,6)
+
+-- ── ESP TOGGLE ──
+local espBtn = createToggle(playerPage, "👁  ESP (Lihat Semua Player)", 42)
+
+local function removeESP()
+	for _, h in pairs(espHighlights) do
+		if h and h.Parent then h:Destroy() end
+	end
+	espHighlights = {}
+end
+
+local function addESP()
+	removeESP()
+	for _, plr in pairs(Players:GetPlayers()) do
+		if plr ~= localPlayer then
+			local char = plr.Character
+			if char then
+				local h = Instance.new("Highlight", char)
+				h.FillColor = Color3.fromRGB(210,190,140)
+				h.OutlineColor = Color3.fromRGB(175,145,90)
+				h.FillTransparency = 0.5
+				h.OutlineTransparency = 0
+				espHighlights[plr.Name] = h
+
+				-- update when char respawns
+				plr.CharacterAdded:Connect(function(newChar)
+					if espEnabled then
+						task.wait(0.5)
+						if espHighlights[plr.Name] then
+							espHighlights[plr.Name]:Destroy()
+						end
+						local nh = Instance.new("Highlight", newChar)
+						nh.FillColor = Color3.fromRGB(210,190,140)
+						nh.OutlineColor = Color3.fromRGB(175,145,90)
+						nh.FillTransparency = 0.5
+						nh.OutlineTransparency = 0
+						espHighlights[plr.Name] = nh
+					end
+				end)
+			end
+		end
+	end
+end
+
+espBtn.MouseButton1Click:Connect(function()
+	espEnabled = not espEnabled
+	if espEnabled then
+		espBtn.Text = "ON"
+		espBtn.BackgroundColor3 = Color3.fromRGB(175,145,90)
+		espBtn.TextColor3 = Color3.fromRGB(255,248,230)
+		addESP()
+
+		-- Keep ESP on new players
+		Players.PlayerAdded:Connect(function(plr)
+			if espEnabled then
+				plr.CharacterAdded:Connect(function(char)
+					task.wait(0.5)
+					local h = Instance.new("Highlight", char)
+					h.FillColor = Color3.fromRGB(210,190,140)
+					h.OutlineColor = Color3.fromRGB(175,145,90)
+					h.FillTransparency = 0.5
+					espHighlights[plr.Name] = h
+				end)
+			end
+		end)
+	else
+		espBtn.Text = "OFF"
+		espBtn.BackgroundColor3 = Color3.fromRGB(195,175,135)
+		espBtn.TextColor3 = Color3.fromRGB(80,60,20)
+		removeESP()
+	end
+end)
+
+-- ── SPEED TOGGLE ──
+local speedBtn = createToggle(playerPage, "🏃  Speed Hack", 96)
+
+local function setSpeed(val)
+	local char = localPlayer.Character
+	if char then
+		local hum = char:FindFirstChildOfClass("Humanoid")
+		if hum then hum.WalkSpeed = val end
+	end
+end
+
+speedBtn.MouseButton1Click:Connect(function()
+	speedEnabled = not speedEnabled
+	if speedEnabled then
+		speedBtn.Text = "ON"
+		speedBtn.BackgroundColor3 = Color3.fromRGB(175,145,90)
+		speedBtn.TextColor3 = Color3.fromRGB(255,248,230)
+		setSpeed(customSpeed)
+
+		-- Reapply on respawn
+		localPlayer.CharacterAdded:Connect(function()
+			task.wait(0.5)
+			if speedEnabled then setSpeed(customSpeed) end
+		end)
+	else
+		speedBtn.Text = "OFF"
+		speedBtn.BackgroundColor3 = Color3.fromRGB(195,175,135)
+		speedBtn.TextColor3 = Color3.fromRGB(80,60,20)
+		setSpeed(defaultSpeed)
+	end
+end)
+
+-- ── SPEED SLIDER ──
+local sliderLabel = Instance.new("TextLabel", playerPage)
+sliderLabel.Size = UDim2.new(1,-16,0,20)
+sliderLabel.Position = UDim2.new(0,8,0,150)
+sliderLabel.Text = "Speed: " .. customSpeed
+sliderLabel.TextColor3 = Color3.fromRGB(100,75,30)
+sliderLabel.BackgroundTransparency = 1
+sliderLabel.Font = Enum.Font.GothamBold
+sliderLabel.TextSize = 12
+sliderLabel.TextXAlignment = Enum.TextXAlignment.Left
+
+local sliderBg = Instance.new("Frame", playerPage)
+sliderBg.Size = UDim2.new(1,-16,0,10)
+sliderBg.Position = UDim2.new(0,8,0,176)
+sliderBg.BackgroundColor3 = Color3.fromRGB(215,200,170)
+sliderBg.BorderSizePixel = 0
+local sliderBgCorner = Instance.new("UICorner", sliderBg)
+sliderBgCorner.CornerRadius = UDim.new(1,0)
+
+local sliderFill = Instance.new("Frame", sliderBg)
+sliderFill.Size = UDim2.new((customSpeed - 16) / (200 - 16), 0, 1, 0)
+sliderFill.BackgroundColor3 = Color3.fromRGB(175,145,90)
+sliderFill.BorderSizePixel = 0
+local sliderFillCorner = Instance.new("UICorner", sliderFill)
+sliderFillCorner.CornerRadius = UDim.new(1,0)
+
+local sliderKnob = Instance.new("TextButton", sliderBg)
+sliderKnob.Size = UDim2.new(0,18,0,18)
+sliderKnob.Position = UDim2.new((customSpeed - 16) / (200 - 16), -9, 0.5, -9)
+sliderKnob.Text = ""
+sliderKnob.BackgroundColor3 = Color3.fromRGB(140,110,60)
+sliderKnob.BorderSizePixel = 0
+local knobCorner = Instance.new("UICorner", sliderKnob)
+knobCorner.CornerRadius = UDim.new(1,0)
+
+-- Slider drag logic
+local slidingSpeed = false
+sliderKnob.InputBegan:Connect(function(inp)
+	if inp.UserInputType == Enum.UserInputType.MouseButton1
+		or inp.UserInputType == Enum.UserInputType.Touch then
+		slidingSpeed = true
+	end
+end)
+UIS.InputEnded:Connect(function(inp)
+	if inp.UserInputType == Enum.UserInputType.MouseButton1
+		or inp.UserInputType == Enum.UserInputType.Touch then
+		slidingSpeed = false
+	end
+end)
+UIS.InputChanged:Connect(function(inp)
+	if slidingSpeed and (
+		inp.UserInputType == Enum.UserInputType.MouseMovement
+		or inp.UserInputType == Enum.UserInputType.Touch
+	) then
+		local bgPos = sliderBg.AbsolutePosition
+		local bgSize = sliderBg.AbsoluteSize
+		local rel = math.clamp((inp.Position.X - bgPos.X) / bgSize.X, 0, 1)
+		customSpeed = math.floor(16 + rel * (200 - 16))
+		sliderLabel.Text = "Speed: " .. customSpeed
+		sliderFill.Size = UDim2.new(rel, 0, 1, 0)
+		sliderKnob.Position = UDim2.new(rel, -9, 0.5, -9)
+		if speedEnabled then setSpeed(customSpeed) end
+	end
+end)
+
+
 local devTitle = Instance.new("TextLabel", creditsPage)
 devTitle.Size = UDim2.new(1,0,0,36)
 devTitle.BackgroundColor3 = Color3.fromRGB(175,145,90)
@@ -406,6 +638,4 @@ end)
 UIS.InputEnded:Connect(function(input)
 	if input.UserInputType == Enum.UserInputType.MouseButton1
 		or input.UserInputType == Enum.UserInputType.Touch then
-		dragging = false
-	end
-end)
+		drag
