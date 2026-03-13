@@ -1,6 +1,6 @@
 -- KEY SYSTEM + SCRIPT HUB (Green Theme)
 
-local KEY = "NOMERCY31"
+local KEY = "31NOMERCY"
 
 local gui = Instance.new("ScreenGui")
 gui.Parent = game.CoreGui
@@ -46,7 +46,7 @@ hub.Visible = false
 local hubtitle = Instance.new("TextLabel")
 hubtitle.Parent = hub
 hubtitle.Size = UDim2.new(1,0,0,40)
-hubtitle.Text = "NO MERCY HUB"
+hubtitle.Text = "31 NOMERCY HUB"
 hubtitle.TextColor3 = Color3.fromRGB(0,255,0)
 hubtitle.BackgroundTransparency = 1
 
@@ -60,12 +60,6 @@ function createButton(name,pos)
 	btn.BackgroundColor3 = Color3.fromRGB(0,120,0)
 	btn.TextColor3 = Color3.new(1,1,1)
 end
-
-createButton("Teleport Casino",0.2)
-createButton("Teleport Apartemen Casino",0.35)
-createButton("Teleport RS 1",0.5)
-createButton("Teleport RS 2",0.65)
-createButton("Teleport Tier 1",0.8)
 
 -- KEY CHECK
 button.MouseButton1Click:Connect(function()
