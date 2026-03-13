@@ -1,72 +1,144 @@
--- KEY SYSTEM + SCRIPT HUB (Green Theme)
+-- NO MERCY HUB (Modern UI Green)
+
+local TweenService = game:GetService("TweenService")
+local UIS = game:GetService("UserInputService")
 
 local KEY = "31NOMERCY"
 
 local gui = Instance.new("ScreenGui")
 gui.Parent = game.CoreGui
 
--- FRAME KEY
+-- MAIN FRAME
 local frame = Instance.new("Frame")
 frame.Parent = gui
-frame.Size = UDim2.new(0,300,0,180)
-frame.Position = UDim2.new(0.5,-150,0.5,-90)
-frame.BackgroundColor3 = Color3.fromRGB(10,10,10)
+frame.Size = UDim2.new(0,320,0,200)
+frame.Position = UDim2.new(0.5,-160,0.6,-100)
+frame.BackgroundColor3 = Color3.fromRGB(15,15,15)
+frame.BorderSizePixel = 0
 
+local corner = Instance.new("UICorner",frame)
+corner.CornerRadius = UDim.new(0,12)
+
+-- TITLE
 local title = Instance.new("TextLabel")
 title.Parent = frame
 title.Size = UDim2.new(1,0,0,40)
-title.Text = "NO MERCY HUB"
-title.TextColor3 = Color3.fromRGB(0,255,0)
 title.BackgroundTransparency = 1
+title.Text = "NO MERCY HUB"
+title.TextColor3 = Color3.fromRGB(0,255,120)
+title.TextScaled = true
+title.Font = Enum.Font.GothamBold
 
-local textbox = Instance.new("TextBox")
-textbox.Parent = frame
-textbox.Size = UDim2.new(0.8,0,0,40)
-textbox.Position = UDim2.new(0.1,0,0.35,0)
-textbox.PlaceholderText = "Enter Key..."
-textbox.BackgroundColor3 = Color3.fromRGB(30,30,30)
-textbox.TextColor3 = Color3.fromRGB(0,255,0)
+-- TEXTBOX
+local box = Instance.new("TextBox")
+box.Parent = frame
+box.Size = UDim2.new(0.8,0,0,40)
+box.Position = UDim2.new(0.1,0,0.35,0)
+box.PlaceholderText = "Enter Key..."
+box.BackgroundColor3 = Color3.fromRGB(25,25,25)
+box.TextColor3 = Color3.fromRGB(0,255,120)
+box.Font = Enum.Font.Gotham
+box.TextScaled = true
 
+Instance.new("UICorner",box).CornerRadius = UDim.new(0,8)
+
+-- BUTTON
 local button = Instance.new("TextButton")
 button.Parent = frame
-button.Size = UDim2.new(0.8,0,0,35)
-button.Position = UDim2.new(0.1,0,0.7,0)
+button.Size = UDim2.new(0.8,0,0,40)
+button.Position = UDim2.new(0.1,0,0.65,0)
 button.Text = "CONTINUE"
-button.BackgroundColor3 = Color3.fromRGB(0,120,0)
+button.BackgroundColor3 = Color3.fromRGB(0,180,80)
 button.TextColor3 = Color3.new(1,1,1)
+button.Font = Enum.Font.GothamBold
+button.TextScaled = true
+
+Instance.new("UICorner",button).CornerRadius = UDim.new(0,8)
+
+-- ANIMATION (fade in + slide)
+frame.Position = UDim2.new(0.5,-160,0.8,-100)
+frame.BackgroundTransparency = 1
+
+TweenService:Create(frame,TweenInfo.new(0.6),{
+	Position = UDim2.new(0.5,-160,0.5,-100),
+	BackgroundTransparency = 0
+}):Play()
+
+-- DRAG SYSTEM
+local dragging = false
+local dragInput, dragStart, startPos
+
+frame.InputBegan:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 then
+		dragging = true
+		dragStart = input.Position
+		startPos = frame.Position
+	end
+end)
+
+frame.InputEnded:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 then
+		dragging = false
+	end
+end)
+
+UIS.InputChanged:Connect(function(input)
+	if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+		local delta = input.Position - dragStart
+		frame.Position = UDim2.new(
+			startPos.X.Scale,
+			startPos.X.Offset + delta.X,
+			startPos.Y.Scale,
+			startPos.Y.Offset + delta.Y
+		)
+	end
+end)
 
 -- HUB
 local hub = Instance.new("Frame")
 hub.Parent = gui
-hub.Size = UDim2.new(0,260,0,300)
+hub.Size = UDim2.new(0,260,0,250)
 hub.Position = UDim2.new(0.02,0,0.3,0)
-hub.BackgroundColor3 = Color3.fromRGB(10,10,10)
+hub.BackgroundColor3 = Color3.fromRGB(15,15,15)
 hub.Visible = false
+
+Instance.new("UICorner",hub).CornerRadius = UDim.new(0,10)
 
 local hubtitle = Instance.new("TextLabel")
 hubtitle.Parent = hub
 hubtitle.Size = UDim2.new(1,0,0,40)
-hubtitle.Text = "31 NOMERCY HUB"
-hubtitle.TextColor3 = Color3.fromRGB(0,255,0)
 hubtitle.BackgroundTransparency = 1
+hubtitle.Text = "NO MERCY HUB"
+hubtitle.TextColor3 = Color3.fromRGB(0,255,120)
+hubtitle.Font = Enum.Font.GothamBold
+hubtitle.TextScaled = true
 
--- TELEPORT BUTTON FUNCTION
-function createButton(name,pos)
-	local btn = Instance.new("TextButton")
-	btn.Parent = hub
-	btn.Size = UDim2.new(0.9,0,0,30)
-	btn.Position = UDim2.new(0.05,0,0,pos)
-	btn.Text = name
-	btn.BackgroundColor3 = Color3.fromRGB(0,120,0)
-	btn.TextColor3 = Color3.new(1,1,1)
+-- BUTTON MAKER
+local function makeButton(text,y)
+	local b = Instance.new("TextButton")
+	b.Parent = hub
+	b.Size = UDim2.new(0.9,0,0,30)
+	b.Position = UDim2.new(0.05,0,0,y)
+	b.Text = text
+	b.BackgroundColor3 = Color3.fromRGB(0,160,70)
+	b.TextColor3 = Color3.new(1,1,1)
+	b.Font = Enum.Font.Gotham
+	b.TextScaled = true
+	Instance.new("UICorner",b).CornerRadius = UDim.new(0,6)
 end
+
+makeButton("Teleport Casino",0.2)
+makeButton("Teleport Apartemen Casino",0.35)
+makeButton("Teleport RS 1",0.5)
+makeButton("Teleport RS 2",0.65)
+makeButton("Teleport Tier 1",0.8)
 
 -- KEY CHECK
 button.MouseButton1Click:Connect(function()
-	if textbox.Text == KEY then
-		frame.Visible = false
+	if box.Text == KEY then
+		frame:Destroy()
 		hub.Visible = true
 	else
-		textbox.Text = "Key Salah!"
+		box.Text = "Salah Key !"
 	end
 end)
