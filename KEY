@@ -1,4 +1,4 @@
--- NO MERCY HUB (Key System + Mobile UI)
+-- NO MERCY HUB (KEY SYSTEM -> MAIN MENU)
 
 local UIS = game:GetService("UserInputService")
 
@@ -14,12 +14,11 @@ open.Position = UDim2.new(0,20,0.5,0)
 open.Text = "OPEN"
 open.BackgroundColor3 = Color3.fromRGB(0,170,80)
 open.TextColor3 = Color3.new(1,1,1)
-Instance.new("UICorner",open)
 
 -- MAIN FRAME
 local frame = Instance.new("Frame", gui)
-frame.Size = UDim2.new(0,340,0,210)
-frame.Position = UDim2.new(0.5,-170,0.5,-105)
+frame.Size = UDim2.new(0,420,0,260)
+frame.Position = UDim2.new(0.5,-210,0.5,-130)
 frame.BackgroundColor3 = Color3.fromRGB(15,15,15)
 frame.Visible = false
 Instance.new("UICorner",frame)
@@ -46,15 +45,6 @@ close.Size = UDim2.new(0,30,1,0)
 close.Position = UDim2.new(1,-30,0,0)
 close.Text = "X"
 close.BackgroundColor3 = Color3.fromRGB(170,40,40)
-close.TextColor3 = Color3.new(1,1,1)
-
--- MINIMIZE
-local mini = Instance.new("TextButton", top)
-mini.Size = UDim2.new(0,30,1,0)
-mini.Position = UDim2.new(1,-60,0,0)
-mini.Text = "-"
-mini.BackgroundColor3 = Color3.fromRGB(40,120,40)
-mini.TextColor3 = Color3.new(1,1,1)
 
 -- CONTENT
 local content = Instance.new("Frame", frame)
@@ -62,140 +52,69 @@ content.Size = UDim2.new(1,0,1,-30)
 content.Position = UDim2.new(0,0,0,30)
 content.BackgroundTransparency = 1
 
--- KEY BOX
-local box = Instance.new("TextBox", content)
-box.Size = UDim2.new(0.8,0,0,40)
-box.Position = UDim2.new(0.1,0,0.25,0)
+-- KEY FRAME
+local keyFrame = Instance.new("Frame", content)
+keyFrame.Size = UDim2.new(1,0,1,0)
+keyFrame.BackgroundTransparency = 1
+
+local keyTitle = Instance.new("TextLabel", keyFrame)
+keyTitle.Size = UDim2.new(1,0,0,40)
+keyTitle.Position = UDim2.new(0,0,0.15,0)
+keyTitle.Text = "ENTER KEY"
+keyTitle.BackgroundTransparency = 1
+keyTitle.TextColor3 = Color3.fromRGB(0,255,120)
+keyTitle.Font = Enum.Font.GothamBold
+keyTitle.TextScaled = true
+
+local box = Instance.new("TextBox", keyFrame)
+box.Size = UDim2.new(0.6,0,0,40)
+box.Position = UDim2.new(0.2,0,0.4,0)
 box.PlaceholderText = "Enter Key..."
 box.BackgroundColor3 = Color3.fromRGB(25,25,25)
 box.TextColor3 = Color3.fromRGB(0,255,120)
-box.Font = Enum.Font.Gotham
-box.TextScaled = true
 Instance.new("UICorner",box)
 
--- BUTTON
-local button = Instance.new("TextButton", content)
-button.Size = UDim2.new(0.8,0,0,40)
-button.Position = UDim2.new(0.1,0,0.6,0)
-button.Text = "VERIFY KEY"
-button.BackgroundColor3 = Color3.fromRGB(0,170,80)
-button.TextColor3 = Color3.new(1,1,1)
-button.Font = Enum.Font.GothamBold
-button.TextScaled = true
-Instance.new("UICorner",button)
+local verify = Instance.new("TextButton", keyFrame)
+verify.Size = UDim2.new(0.6,0,0,40)
+verify.Position = UDim2.new(0.2,0,0.6,0)
+verify.Text = "VERIFY KEY"
+verify.BackgroundColor3 = Color3.fromRGB(0,170,80)
+verify.TextColor3 = Color3.new(1,1,1)
+Instance.new("UICorner",verify)
 
--- HUB LABEL
-local hubLabel = Instance.new("TextLabel", content)
-hubLabel.Size = UDim2.new(1,0,0,40)
-hubLabel.Position = UDim2.new(0,0,0.75,0)
-hubLabel.BackgroundTransparency = 1
-hubLabel.TextColor3 = Color3.fromRGB(0,255,120)
-hubLabel.Font = Enum.Font.GothamBold
-hubLabel.TextScaled = true
-hubLabel.Visible = false
+-- MAIN MENU FRAME
+local mainMenu = Instance.new("Frame", content)
+mainMenu.Size = UDim2.new(1,0,1,0)
+mainMenu.BackgroundTransparency = 1
+mainMenu.Visible = false
 
--- OPEN
-open.MouseButton1Click:Connect(function()
-	frame.Visible = true
-	open.Visible = false
-end)
+-- TAB BAR
+local tabBar = Instance.new("Frame", mainMenu)
+tabBar.Size = UDim2.new(0,120,1,0)
+tabBar.BackgroundColor3 = Color3.fromRGB(20,20,20)
 
--- CLOSE
-close.MouseButton1Click:Connect(function()
-	frame.Visible = false
-	open.Visible = true
-end)
-
--- MINIMIZE
-local minimized = false
-mini.MouseButton1Click:Connect(function()
-	minimized = not minimized
-	content.Visible = not minimized
-	frame.Size = minimized and UDim2.new(0,340,0,30) or UDim2.new(0,340,0,210)
-end)
-
--- KEY CHECK
-button.MouseButton1Click:Connect(function()
-	if box.Text == KEY then
-		box.Visible = false
-		button.Visible = false
-		hubLabel.Text = "Hub Unlocked!"
-		hubLabel.Visible = true
-	else
-		box.Text = "Wrong Key!"
-	end
-end)
-
--- MOBILE DRAG
-local dragging
-local dragInput
-local dragStart
-local startPos
-
-local function update(input)
-	local delta = input.Position - dragStart
-	frame.Position = UDim2.new(
-		startPos.X.Scale,
-		startPos.X.Offset + delta.X,
-		startPos.Y.Scale,
-		startPos.Y.Offset + delta.Y
-	)
-end
-
-top.InputBegan:Connect(function(input)
-	if input.UserInputType == Enum.UserInputType.Touch or input.UserInputType == Enum.UserInputType.MouseButton1 then
-		dragging = true
-		dragStart = input.Position
-		startPos = frame.Position
-		
-		input.Changed:Connect(function()
-			if input.UserInputState == Enum.UserInputState.End then
-				dragging = false
-			end
-		end)
-	end
-end)
-
-top.InputChanged:Connect(function(input)
-	if input.UserInputType == Enum.UserInputType.Touch or input.UserInputType == Enum.UserInputType.MouseMovement then
-		dragInput = input
-	end
-end)
-
-UIS.InputChanged:Connect(function(input)
-	if input == dragInput and dragging then
-		update(input)
-	end
-end)
-
--- TAB SYSTEM (Premium Style)
-
-local tabs = Instance.new("Frame", frame)
-tabs.Size = UDim2.new(0,120,1,-30)
-tabs.Position = UDim2.new(0,0,0,30)
-tabs.BackgroundColor3 = Color3.fromRGB(20,20,20)
-
-local pages = Instance.new("Frame", frame)
-pages.Size = UDim2.new(1,-120,1,-30)
-pages.Position = UDim2.new(0,120,0,30)
+local pages = Instance.new("Frame", mainMenu)
+pages.Size = UDim2.new(1,-120,1,0)
+pages.Position = UDim2.new(0,120,0,0)
 pages.BackgroundTransparency = 1
 
--- FUNCTION CREATE PAGE
+-- CREATE PAGE
 local function createPage()
-	local page = Instance.new("Frame")
-	page.Parent = pages
+
+	local page = Instance.new("Frame", pages)
 	page.Size = UDim2.new(1,0,1,0)
 	page.Visible = false
 	page.BackgroundTransparency = 1
+	
 	return page
 end
 
--- FUNCTION CREATE TAB
-local function createTab(name, order)
+-- CREATE TAB
+local function createTab(name,pos)
 
-	local tab = Instance.new("TextButton", tabs)
+	local tab = Instance.new("TextButton", tabBar)
 	tab.Size = UDim2.new(1,0,0,40)
-	tab.Position = UDim2.new(0,0,0,(order-1)*40)
+	tab.Position = UDim2.new(0,0,0,(pos-1)*40)
 	tab.Text = name
 	tab.BackgroundColor3 = Color3.fromRGB(0,170,80)
 	tab.TextColor3 = Color3.new(1,1,1)
@@ -211,38 +130,111 @@ local function createTab(name, order)
 		end
 
 		page.Visible = true
+
 	end)
 
 	return page
 end
 
--- CREATE TABS
+-- TABS
 local mainPage = createTab("Main",1)
 local teleportPage = createTab("Teleport",2)
 local playerPage = createTab("Player",3)
-local farmPage = createTab("Farm",4)
 
 mainPage.Visible = true
 
--- MAIN PAGE CONTENT
-local title = Instance.new("TextLabel", mainPage)
-title.Size = UDim2.new(1,0,0,40)
-title.Text = "MAIN MENU"
-title.BackgroundTransparency = 1
-title.TextColor3 = Color3.fromRGB(0,255,120)
-title.Font = Enum.Font.GothamBold
-title.TextScaled = true
+-- MAIN PAGE TEXT
+local info = Instance.new("TextLabel", mainPage)
+info.Size = UDim2.new(1,0,0,40)
+info.Text = "Welcome To No Mercy Hub"
+info.BackgroundTransparency = 1
+info.TextColor3 = Color3.fromRGB(0,255,120)
+info.Font = Enum.Font.GothamBold
+info.TextScaled = true
 
--- TELEPORT BUTTON EXAMPLE
-local tp = Instance.new("TextButton", teleportPage)
-tp.Size = UDim2.new(0.8,0,0,40)
-tp.Position = UDim2.new(0.1,0,0.2,0)
-tp.Text = "Teleport Casino"
-tp.BackgroundColor3 = Color3.fromRGB(0,170,80)
+-- KEY CHECK
+verify.MouseButton1Click:Connect(function()
 
--- PLAYER PAGE
-local speed = Instance.new("TextButton", playerPage)
-speed.Size = UDim2.new(0.8,0,0,40)
-speed.Position = UDim2.new(0.1,0,0.2,0)
-speed.Text = "WalkSpeed"
-speed.BackgroundColor3 = Color3.fromRGB(0,170,80)
+	if box.Text == KEY then
+
+		keyFrame.Visible = false
+		mainMenu.Visible = true
+
+	else
+
+		box.Text = "Wrong Key!"
+
+	end
+
+end)
+
+-- OPEN
+open.MouseButton1Click:Connect(function()
+
+	frame.Visible = true
+	open.Visible = false
+
+end)
+
+-- CLOSE
+close.MouseButton1Click:Connect(function()
+
+	frame.Visible = false
+	open.Visible = true
+
+end)
+
+-- DRAG (MOBILE SUPPORT)
+local dragging
+local dragInput
+local dragStart
+local startPos
+
+local function update(input)
+
+	local delta = input.Position - dragStart
+
+	frame.Position = UDim2.new(
+		startPos.X.Scale,
+		startPos.X.Offset + delta.X,
+		startPos.Y.Scale,
+		startPos.Y.Offset + delta.Y
+	)
+
+end
+
+top.InputBegan:Connect(function(input)
+
+	if input.UserInputType == Enum.UserInputType.Touch or input.UserInputType == Enum.UserInputType.MouseButton1 then
+
+		dragging = true
+		dragStart = input.Position
+		startPos = frame.Position
+
+		input.Changed:Connect(function()
+
+			if input.UserInputState == Enum.UserInputState.End then
+				dragging = false
+			end
+
+		end)
+
+	end
+
+end)
+
+top.InputChanged:Connect(function(input)
+
+	if input.UserInputType == Enum.UserInputType.Touch or input.UserInputType == Enum.UserInputType.MouseMovement then
+		dragInput = input
+	end
+
+end)
+
+UIS.InputChanged:Connect(function(input)
+
+	if input == dragInput and dragging then
+		update(input)
+	end
+
+end)
