@@ -3,7 +3,7 @@
 local TweenService = game:GetService("TweenService")
 local UIS = game:GetService("UserInputService")
 
-local KEY = "NOMERCY31"
+local KEY = "31NOMERCY"
 
 local gui = Instance.new("ScreenGui")
 gui.Parent = game.CoreGui
@@ -61,7 +61,7 @@ content.Position = UDim2.new(0,0,0,30)
 content.BackgroundTransparency = 1
 
 -- TEXTBOX
-local box = Instance.new("TextBox", content)
+local box = Instance.new("Enter Key", content)
 box.Size = UDim2.new(0.8,0,0,40)
 box.Position = UDim2.new(0.1,0,0.3,0)
 box.PlaceholderText = "Enter Key..."
