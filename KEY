@@ -1,84 +1,93 @@
--- NO MERCY HUB (FULL SYSTEM)
+-- NO MERCY HUB by Kemerus
 
 local TweenService = game:GetService("TweenService")
 local UIS = game:GetService("UserInputService")
 
-local KEY = "NOMERCY31"
+local KEY = "KEMERUS31"
 
+-- GUI
 local gui = Instance.new("ScreenGui", game.CoreGui)
 gui.ResetOnSpawn = false
 
 -- OPEN BUTTON
 local open = Instance.new("TextButton", gui)
-open.Size = UDim2.new(0,55,0,55)
+open.Size = UDim2.new(0,60,0,60)
 open.Position = UDim2.new(0,20,0.5,0)
 open.Text = "OPEN"
-open.BackgroundColor3 = Color3.fromRGB(0,170,80)
+open.BackgroundColor3 = Color3.fromRGB(0,200,120)
 open.TextColor3 = Color3.new(1,1,1)
+Instance.new("UICorner",open)
 
 -- MAIN FRAME
 local frame = Instance.new("Frame", gui)
-frame.Size = UDim2.new(0,420,0,260)
-frame.Position = UDim2.new(0.5,-210,0.5,-130)
-frame.BackgroundColor3 = Color3.fromRGB(15,15,15)
+frame.Size = UDim2.new(0,460,0,280)
+frame.Position = UDim2.new(0.5,-230,0.5,-140)
+frame.BackgroundColor3 = Color3.fromRGB(18,18,18)
 frame.Visible = false
 Instance.new("UICorner",frame)
 
 -- TOP BAR
 local top = Instance.new("Frame", frame)
-top.Size = UDim2.new(1,0,0,30)
-top.BackgroundColor3 = Color3.fromRGB(20,20,20)
+top.Size = UDim2.new(1,0,0,35)
+top.BackgroundColor3 = Color3.fromRGB(30,0,0)
 
 local title = Instance.new("TextLabel", top)
-title.Size = UDim2.new(1,-40,1,0)
+title.Size = UDim2.new(1,-80,1,0)
 title.Position = UDim2.new(0,10,0,0)
-title.BackgroundTransparency = 1
 title.Text = "NO MERCY HUB"
-title.TextColor3 = Color3.fromRGB(0,255,120)
+title.TextColor3 = Color3.fromRGB(255,220,0)
+title.BackgroundTransparency = 1
 title.Font = Enum.Font.GothamBold
 title.TextScaled = true
 title.TextXAlignment = Enum.TextXAlignment.Left
 
--- CLOSE BUTTON
+-- MINIMIZE
+local mini = Instance.new("TextButton", top)
+mini.Size = UDim2.new(0,30,1,0)
+mini.Position = UDim2.new(1,-60,0,0)
+mini.Text = "-"
+mini.BackgroundColor3 = Color3.fromRGB(40,40,40)
+
+-- CLOSE
 local close = Instance.new("TextButton", top)
 close.Size = UDim2.new(0,30,1,0)
 close.Position = UDim2.new(1,-30,0,0)
 close.Text = "X"
-close.BackgroundColor3 = Color3.fromRGB(170,40,40)
+close.BackgroundColor3 = Color3.fromRGB(180,40,40)
 
 -- CONTENT
 local content = Instance.new("Frame", frame)
-content.Size = UDim2.new(1,0,1,-30)
-content.Position = UDim2.new(0,0,0,30)
+content.Size = UDim2.new(1,0,1,-35)
+content.Position = UDim2.new(0,0,0,35)
 content.BackgroundTransparency = 1
 
--- KEY FRAME
-local keyFrame = Instance.new("Frame", content)
-keyFrame.Size = UDim2.new(1,0,1,0)
-keyFrame.BackgroundTransparency = 1
+-- KEY PAGE
+local keyPage = Instance.new("Frame", content)
+keyPage.Size = UDim2.new(1,0,1,0)
+keyPage.BackgroundTransparency = 1
 
-local keyTitle = Instance.new("TextLabel", keyFrame)
+local keyTitle = Instance.new("TextLabel", keyPage)
 keyTitle.Size = UDim2.new(1,0,0,40)
 keyTitle.Position = UDim2.new(0,0,0.2,0)
 keyTitle.Text = "ENTER KEY"
+keyTitle.TextColor3 = Color3.fromRGB(255,220,0)
 keyTitle.BackgroundTransparency = 1
-keyTitle.TextColor3 = Color3.fromRGB(0,255,120)
 keyTitle.Font = Enum.Font.GothamBold
 keyTitle.TextScaled = true
 
-local box = Instance.new("TextBox", keyFrame)
-box.Size = UDim2.new(0.6,0,0,40)
-box.Position = UDim2.new(0.2,0,0.45,0)
-box.PlaceholderText = "Enter Key..."
-box.BackgroundColor3 = Color3.fromRGB(25,25,25)
-box.TextColor3 = Color3.fromRGB(0,255,120)
-Instance.new("UICorner",box)
+local keyBox = Instance.new("TextBox", keyPage)
+keyBox.Size = UDim2.new(0.6,0,0,40)
+keyBox.Position = UDim2.new(0.2,0,0.45,0)
+keyBox.PlaceholderText = "Enter Key..."
+keyBox.BackgroundColor3 = Color3.fromRGB(25,25,25)
+keyBox.TextColor3 = Color3.new(1,1,1)
+Instance.new("UICorner",keyBox)
 
-local verify = Instance.new("TextButton", keyFrame)
+local verify = Instance.new("TextButton", keyPage)
 verify.Size = UDim2.new(0.6,0,0,40)
 verify.Position = UDim2.new(0.2,0,0.65,0)
-verify.Text = "VERIFY"
-verify.BackgroundColor3 = Color3.fromRGB(0,170,80)
+verify.Text = "LOGIN"
+verify.BackgroundColor3 = Color3.fromRGB(0,200,120)
 verify.TextColor3 = Color3.new(1,1,1)
 Instance.new("UICorner",verify)
 
@@ -108,75 +117,109 @@ local function createPage()
 end
 
 -- TAB FUNCTION
-local function createTab(name,icon,pos)
+local function createTab(name,pos)
 
 	local tab = Instance.new("TextButton", tabBar)
 	tab.Size = UDim2.new(1,0,0,45)
 	tab.Position = UDim2.new(0,0,0,(pos-1)*45)
-	tab.BackgroundColor3 = Color3.fromRGB(25,25,25)
-	tab.Text = ""
-
-	local img = Instance.new("ImageLabel", tab)
-	img.Size = UDim2.new(0,20,0,20)
-	img.Position = UDim2.new(0,10,0.5,-10)
-	img.BackgroundTransparency = 1
-	img.Image = icon
-
-	local txt = Instance.new("TextLabel", tab)
-	txt.Size = UDim2.new(1,-40,1,0)
-	txt.Position = UDim2.new(0,35,0,0)
-	txt.BackgroundTransparency = 1
-	txt.Text = name
-	txt.TextColor3 = Color3.fromRGB(0,255,120)
-	txt.Font = Enum.Font.GothamBold
-	txt.TextScaled = true
+	tab.Text = name
+	tab.BackgroundColor3 = Color3.fromRGB(30,30,30)
+	tab.TextColor3 = Color3.new(1,1,1)
 
 	local page = createPage()
 
 	tab.MouseButton1Click:Connect(function()
-
 		for _,v in pairs(pages:GetChildren()) do
 			if v:IsA("Frame") then
 				v.Visible = false
 			end
 		end
-
 		page.Visible = true
-
 	end)
 
 	return page
 end
 
--- CREATE TABS
-local mainPage = createTab("Main","rbxassetid://6031280882",1)
-local teleportPage = createTab("Teleport","rbxassetid://6031091004",2)
-local playerPage = createTab("Player","rbxassetid://6031265976",3)
+-- TABS
+local mainPage = createTab("Main",1)
+local creditsPage = createTab("Credits",2)
 
 mainPage.Visible = true
 
--- CREDITS
-local credits = Instance.new("TextLabel", mainPage)
-credits.Size = UDim2.new(1,0,0,80)
-credits.Position = UDim2.new(0,0,0.3,0)
-credits.BackgroundTransparency = 1
-credits.TextColor3 = Color3.fromRGB(0,255,120)
-credits.Font = Enum.Font.GothamBold
-credits.TextScaled = true
-credits.Text = [[
-NO MERCY HUB
+-- MAIN TEXT
+local welcome = Instance.new("TextLabel", mainPage)
+welcome.Size = UDim2.new(1,0,0,60)
+welcome.Position = UDim2.new(0,0,0.3,0)
+welcome.BackgroundTransparency = 1
+welcome.Text = "Welcome To NO MERCY HUB"
+welcome.TextColor3 = Color3.new(1,1,1)
+welcome.Font = Enum.Font.GothamBold
+welcome.TextScaled = true
 
-Script ini dibuat oleh
-KEMERUS
-]]
+-- CREDITS PAGE STYLE
+local devTitle = Instance.new("TextLabel", creditsPage)
+devTitle.Size = UDim2.new(1,0,0,35)
+devTitle.BackgroundColor3 = Color3.fromRGB(120,0,0)
+devTitle.Text = "DEVELOPERS"
+devTitle.TextColor3 = Color3.new(1,1,1)
+devTitle.Font = Enum.Font.GothamBold
+devTitle.TextScaled = true
+
+local card = Instance.new("Frame", creditsPage)
+card.Size = UDim2.new(0.9,0,0,80)
+card.Position = UDim2.new(0.05,0,0,50)
+card.BackgroundColor3 = Color3.fromRGB(20,20,20)
+Instance.new("UICorner",card)
+
+local border = Instance.new("UIStroke",card)
+border.Color = Color3.fromRGB(255,200,0)
+border.Thickness = 2
+
+local icon = Instance.new("TextLabel", card)
+icon.Size = UDim2.new(0,50,0,50)
+icon.Position = UDim2.new(0,15,0.5,-25)
+icon.BackgroundColor3 = Color3.fromRGB(255,60,60)
+icon.Text = "K"
+icon.TextColor3 = Color3.new(1,1,1)
+icon.TextScaled = true
+Instance.new("UICorner",icon)
+
+local name = Instance.new("TextLabel", card)
+name.Size = UDim2.new(0.5,0,0,25)
+name.Position = UDim2.new(0,80,0,15)
+name.Text = "Kemerus"
+name.TextColor3 = Color3.new(1,1,1)
+name.BackgroundTransparency = 1
+name.Font = Enum.Font.GothamBold
+name.TextScaled = true
+name.TextXAlignment = Enum.TextXAlignment.Left
+
+local role = Instance.new("TextLabel", card)
+role.Size = UDim2.new(0.5,0,0,20)
+role.Position = UDim2.new(0,80,0,40)
+role.Text = "Script Developer"
+role.TextColor3 = Color3.fromRGB(200,200,200)
+role.BackgroundTransparency = 1
+role.Font = Enum.Font.Gotham
+role.TextScaled = true
+role.TextXAlignment = Enum.TextXAlignment.Left
+
+local tag = Instance.new("TextLabel", card)
+tag.Size = UDim2.new(0,90,0,30)
+tag.Position = UDim2.new(1,-100,0.5,-15)
+tag.BackgroundColor3 = Color3.fromRGB(200,150,0)
+tag.Text = "FOUNDER"
+tag.TextColor3 = Color3.new(1,1,1)
+tag.TextScaled = true
+Instance.new("UICorner",tag)
 
 -- KEY VERIFY
 verify.MouseButton1Click:Connect(function()
 
-	if box.Text == KEY then
+	if keyBox.Text == KEY then
 
 		local tween = TweenService:Create(
-			keyFrame,
+			keyPage,
 			TweenInfo.new(0.5),
 			{Position = UDim2.new(0,0,1,0)}
 		)
@@ -184,32 +227,31 @@ verify.MouseButton1Click:Connect(function()
 		tween:Play()
 
 		tween.Completed:Connect(function()
-			keyFrame.Visible = false
+			keyPage.Visible = false
 			mainMenu.Visible = true
 		end)
 
 	else
 
-		box.Text = "Wrong Key!"
+		keyBox.Text = "Wrong Key!"
 
 	end
 
 end)
 
--- OPEN BUTTON
+-- BUTTON EVENTS
 open.MouseButton1Click:Connect(function()
-
 	frame.Visible = true
 	open.Visible = false
-
 end)
 
--- CLOSE BUTTON
 close.MouseButton1Click:Connect(function()
-
 	frame.Visible = false
 	open.Visible = true
+end)
 
+mini.MouseButton1Click:Connect(function()
+	mainMenu.Visible = not mainMenu.Visible
 end)
 
 -- DRAG MOBILE
@@ -219,50 +261,37 @@ local dragStart
 local startPos
 
 local function update(input)
-
 	local delta = input.Position - dragStart
-
 	frame.Position = UDim2.new(
 		startPos.X.Scale,
 		startPos.X.Offset + delta.X,
 		startPos.Y.Scale,
 		startPos.Y.Offset + delta.Y
 	)
-
 end
 
 top.InputBegan:Connect(function(input)
-
 	if input.UserInputType == Enum.UserInputType.Touch or input.UserInputType == Enum.UserInputType.MouseButton1 then
-
 		dragging = true
 		dragStart = input.Position
 		startPos = frame.Position
 
 		input.Changed:Connect(function()
-
 			if input.UserInputState == Enum.UserInputState.End then
 				dragging = false
 			end
-
 		end)
-
 	end
-
 end)
 
 top.InputChanged:Connect(function(input)
-
 	if input.UserInputType == Enum.UserInputType.Touch or input.UserInputType == Enum.UserInputType.MouseMovement then
 		dragInput = input
 	end
-
 end)
 
 UIS.InputChanged:Connect(function(input)
-
 	if input == dragInput and dragging then
 		update(input)
 	end
-
 end)
