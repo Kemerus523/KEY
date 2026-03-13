@@ -167,3 +167,82 @@ UIS.InputChanged:Connect(function(input)
 		update(input)
 	end
 end)
+
+-- TAB SYSTEM (Premium Style)
+
+local tabs = Instance.new("Frame", frame)
+tabs.Size = UDim2.new(0,120,1,-30)
+tabs.Position = UDim2.new(0,0,0,30)
+tabs.BackgroundColor3 = Color3.fromRGB(20,20,20)
+
+local pages = Instance.new("Frame", frame)
+pages.Size = UDim2.new(1,-120,1,-30)
+pages.Position = UDim2.new(0,120,0,30)
+pages.BackgroundTransparency = 1
+
+-- FUNCTION CREATE PAGE
+local function createPage()
+	local page = Instance.new("Frame")
+	page.Parent = pages
+	page.Size = UDim2.new(1,0,1,0)
+	page.Visible = false
+	page.BackgroundTransparency = 1
+	return page
+end
+
+-- FUNCTION CREATE TAB
+local function createTab(name, order)
+
+	local tab = Instance.new("TextButton", tabs)
+	tab.Size = UDim2.new(1,0,0,40)
+	tab.Position = UDim2.new(0,0,0,(order-1)*40)
+	tab.Text = name
+	tab.BackgroundColor3 = Color3.fromRGB(0,170,80)
+	tab.TextColor3 = Color3.new(1,1,1)
+
+	local page = createPage()
+
+	tab.MouseButton1Click:Connect(function()
+
+		for _,v in pairs(pages:GetChildren()) do
+			if v:IsA("Frame") then
+				v.Visible = false
+			end
+		end
+
+		page.Visible = true
+	end)
+
+	return page
+end
+
+-- CREATE TABS
+local mainPage = createTab("Main",1)
+local teleportPage = createTab("Teleport",2)
+local playerPage = createTab("Player",3)
+local farmPage = createTab("Farm",4)
+
+mainPage.Visible = true
+
+-- MAIN PAGE CONTENT
+local title = Instance.new("TextLabel", mainPage)
+title.Size = UDim2.new(1,0,0,40)
+title.Text = "MAIN MENU"
+title.BackgroundTransparency = 1
+title.TextColor3 = Color3.fromRGB(0,255,120)
+title.Font = Enum.Font.GothamBold
+title.TextScaled = true
+
+-- TELEPORT BUTTON EXAMPLE
+local tp = Instance.new("TextButton", teleportPage)
+tp.Size = UDim2.new(0.8,0,0,40)
+tp.Position = UDim2.new(0.1,0,0.2,0)
+tp.Text = "Teleport Casino"
+tp.BackgroundColor3 = Color3.fromRGB(0,170,80)
+
+-- PLAYER PAGE
+local speed = Instance.new("TextButton", playerPage)
+speed.Size = UDim2.new(0.8,0,0,40)
+speed.Position = UDim2.new(0.1,0,0.2,0)
+speed.Text = "WalkSpeed"
+speed.BackgroundColor3 = Color3.fromRGB(0,170,80)
