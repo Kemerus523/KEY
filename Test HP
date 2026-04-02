@@ -16,7 +16,7 @@ local CONFIG = {
     MaxSize = Vector2.new(1000, 700),
     DefaultSize = Vector2.new(780, 520),
     Creator = "Kemerus",
-    Discord = "discord.gg/kemerus"
+    Discord = "https://discord.gg/7PvUFqv6JC"
 }
 
 -- Colors
@@ -38,7 +38,7 @@ ScreenGui.ResetOnSpawn = false
 ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
 -- Wait for PlayerGui
-repeat wait() until LocalPlayer:FindFirstChild("PlayerGui")
+repeat task.wait(0.2) until LocalPlayer:FindFirstChild("PlayerGui")
 ScreenGui.Parent = LocalPlayer.PlayerGui
 
 -- Utility Functions
@@ -305,11 +305,11 @@ Sidebar.Parent = MainFrame
 
 -- Tab Data
 local TabData = {
-    {Name = "Combat", Icon = "C"},
-    {Name = "Players", Icon = "P"},
-    {Name = "Visuals", Icon = "V"},
-    {Name = "Misc", Icon = "M"},
-    {Name = "Credits", Icon = "★"}
+    {Name = "Combat", Icon = "🗡️"},
+    {Name = "Players", Icon = "👤"},
+    {Name = "Visuals", Icon = "👀"},
+    {Name = "Misc", Icon = "⚙️"},
+    {Name = "Credits", Icon = "⭐"}
 }
 
 local SelectedTab = nil
