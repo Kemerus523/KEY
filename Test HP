@@ -36,7 +36,10 @@ local ScreenGui = Instance.new("ScreenGui")
 ScreenGui.Name = "KemerusHub"
 ScreenGui.ResetOnSpawn = false
 ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
-ScreenGui.Parent = LocalPlayer:WaitForChild("PlayerGui")
+
+-- Wait for PlayerGui
+repeat wait() until LocalPlayer:FindFirstChild("PlayerGui")
+ScreenGui.Parent = LocalPlayer.PlayerGui
 
 -- Utility Functions
 local function CreateUICorner(radius)
@@ -71,20 +74,6 @@ KeyFrame.Parent = ScreenGui
 CreateUICorner(12).Parent = KeyFrame
 CreateUIStroke(COLORS.Border, 1).Parent = KeyFrame
 
--- Key Frame Shadow
-local KeyShadow = Instance.new("ImageLabel")
-KeyShadow.Name = "Shadow"
-KeyShadow.Size = UDim2.new(1, 30, 1, 30)
-KeyShadow.Position = UDim2.new(0, -15, 0, -15)
-KeyShadow.BackgroundTransparency = 1
-KeyShadow.Image = "rbxasset://textures/ui/GuiImagePlaceholder.png"
-KeyShadow.ImageColor3 = Color3.fromRGB(0, 0, 0)
-KeyShadow.ImageTransparency = 0.7
-KeyShadow.ScaleType = Enum.ScaleType.Slice
-KeyShadow.SliceCenter = Rect.new(10, 10, 118, 118)
-KeyShadow.ZIndex = 0
-KeyShadow.Parent = KeyFrame
-
 -- Logo Container
 local LogoContainer = Instance.new("Frame")
 LogoContainer.Size = UDim2.new(1, 0, 0, 80)
@@ -100,7 +89,7 @@ LogoBottomCover.BackgroundColor3 = COLORS.Secondary
 LogoBottomCover.BorderSizePixel = 0
 LogoBottomCover.Parent = LogoContainer
 
--- Logo Icon (Stylized)
+-- Logo Icon
 local LogoIcon = Instance.new("TextLabel")
 LogoIcon.Size = UDim2.new(0, 60, 0, 60)
 LogoIcon.Position = UDim2.new(0, 20, 0.5, -30)
@@ -205,20 +194,6 @@ MainFrame.ClipsDescendants = false
 MainFrame.Parent = ScreenGui
 CreateUICorner(12).Parent = MainFrame
 CreateUIStroke(COLORS.Border, 1).Parent = MainFrame
-
--- Main Shadow
-local MainShadow = Instance.new("ImageLabel")
-MainShadow.Name = "Shadow"
-MainShadow.Size = UDim2.new(1, 30, 1, 30)
-MainShadow.Position = UDim2.new(0, -15, 0, -15)
-MainShadow.BackgroundTransparency = 1
-MainShadow.Image = "rbxasset://textures/ui/GuiImagePlaceholder.png"
-MainShadow.ImageColor3 = Color3.fromRGB(0, 0, 0)
-MainShadow.ImageTransparency = 0.7
-MainShadow.ScaleType = Enum.ScaleType.Slice
-MainShadow.SliceCenter = Rect.new(10, 10, 118, 118)
-MainShadow.ZIndex = 0
-MainShadow.Parent = MainFrame
 
 -- Top Bar
 local TopBar = Instance.new("Frame")
@@ -330,11 +305,11 @@ Sidebar.Parent = MainFrame
 
 -- Tab Data
 local TabData = {
-    {Name = "Combat", Icon = "🗡"},
-    {Name = "Players", Icon = "👤"},
-    {Name = "Visuals", Icon = "👁"},
-    {Name = "Misc", Icon = "⚙"},
-    {Name = "Credits", Icon = "⭐"}
+    {Name = "Combat", Icon = "C"},
+    {Name = "Players", Icon = "P"},
+    {Name = "Visuals", Icon = "V"},
+    {Name = "Misc", Icon = "M"},
+    {Name = "Credits", Icon = "★"}
 }
 
 local SelectedTab = nil
@@ -357,23 +332,16 @@ ResizeHandle.Position = UDim2.new(1, -10, 1, -10)
 ResizeHandle.AnchorPoint = Vector2.new(0.5, 0.5)
 ResizeHandle.BackgroundColor3 = COLORS.Accent
 ResizeHandle.BorderSizePixel = 0
-ResizeHandle.Text = ""
+ResizeHandle.Text = "◢"
+ResizeHandle.Font = Enum.Font.GothamBold
+ResizeHandle.TextSize = 12
+ResizeHandle.TextColor3 = Color3.fromRGB(255, 255, 255)
 ResizeHandle.AutoButtonColor = false
 ResizeHandle.ZIndex = 10
 ResizeHandle.Parent = MainFrame
 CreateUICorner(10).Parent = ResizeHandle
 
--- Resize Handle Icon
-local ResizeIcon = Instance.new("TextLabel")
-ResizeIcon.Size = UDim2.new(1, 0, 1, 0)
-ResizeIcon.BackgroundTransparency = 1
-ResizeIcon.Text = "⟋"
-ResizeIcon.Font = Enum.Font.GothamBold
-ResizeIcon.TextSize = 16
-ResizeIcon.TextColor3 = Color3.fromRGB(255, 255, 255)
-ResizeIcon.Parent = ResizeHandle
-
--- Floating Hide Button (Shows when GUI is hidden)
+-- Floating Hide Button
 local FloatingHideButton = Instance.new("TextButton")
 FloatingHideButton.Name = "FloatingHideButton"
 FloatingHideButton.Size = UDim2.new(0, 50, 0, 50)
@@ -408,10 +376,9 @@ local function CreateTabButton(tabData, index)
     icon.Position = UDim2.new(0, 12, 0.5, -12)
     icon.BackgroundTransparency = 1
     icon.Text = tabData.Icon
-    icon.Font = Enum.Font.Gotham
+    icon.Font = Enum.Font.GothamBold
     icon.TextSize = 18
     icon.TextColor3 = COLORS.TextDim
-    icon.RichText = true
     icon.Parent = button
     
     local label = Instance.new("TextLabel")
@@ -467,79 +434,79 @@ local function CreateCreditsContent()
     end
     
     -- Credits Container
-    local creditsContainer = Instance.new("Frame")
-    creditsContainer.Size = UDim2.new(1, -40, 1, -40)
-    creditsContainer.Position = UDim2.new(0, 20, 0, 20)
+    local creditsContainer = Instance.new("ScrollingFrame")
+    creditsContainer.Size = UDim2.new(1, -20, 1, -20)
+    creditsContainer.Position = UDim2.new(0, 10, 0, 10)
     creditsContainer.BackgroundTransparency = 1
+    creditsContainer.BorderSizePixel = 0
+    creditsContainer.ScrollBarThickness = 4
+    creditsContainer.CanvasSize = UDim2.new(0, 0, 0, 450)
     creditsContainer.Parent = ContentFrame
     
     -- Creator Logo
     local creatorLogo = Instance.new("TextLabel")
-    creatorLogo.Size = UDim2.new(0, 120, 0, 120)
-    creatorLogo.Position = UDim2.new(0.5, -60, 0, 40)
+    creatorLogo.Size = UDim2.new(0, 100, 0, 100)
+    creatorLogo.Position = UDim2.new(0.5, -50, 0, 30)
     creatorLogo.BackgroundColor3 = COLORS.Accent
     creatorLogo.BorderSizePixel = 0
     creatorLogo.Text = "K"
     creatorLogo.Font = Enum.Font.GothamBold
-    creatorLogo.TextSize = 64
+    creatorLogo.TextSize = 56
     creatorLogo.TextColor3 = Color3.fromRGB(255, 255, 255)
     creatorLogo.Parent = creditsContainer
-    CreateUICorner(60).Parent = creatorLogo
+    CreateUICorner(50).Parent = creatorLogo
     
-    -- Glow Effect
-    local logoGlow = Instance.new("UIStroke")
-    logoGlow.Color = COLORS.Accent
-    logoGlow.Thickness = 3
+    local logoGlow = CreateUIStroke(COLORS.Accent, 3)
     logoGlow.Transparency = 0.5
     logoGlow.Parent = creatorLogo
     
     -- Hub Name
     local hubName = Instance.new("TextLabel")
-    hubName.Size = UDim2.new(1, 0, 0, 40)
-    hubName.Position = UDim2.new(0, 0, 0, 180)
+    hubName.Size = UDim2.new(1, 0, 0, 35)
+    hubName.Position = UDim2.new(0, 0, 0, 150)
     hubName.BackgroundTransparency = 1
     hubName.Text = CONFIG.HubTitle
     hubName.Font = Enum.Font.GothamBold
-    hubName.TextSize = 32
+    hubName.TextSize = 28
     hubName.TextColor3 = COLORS.Text
     hubName.Parent = creditsContainer
     
     -- Version
     local versionLabel = Instance.new("TextLabel")
     versionLabel.Size = UDim2.new(1, 0, 0, 20)
-    versionLabel.Position = UDim2.new(0, 0, 0, 225)
+    versionLabel.Position = UDim2.new(0, 0, 0, 190)
     versionLabel.BackgroundTransparency = 1
     versionLabel.Text = CONFIG.Version
     versionLabel.Font = Enum.Font.Gotham
-    versionLabel.TextSize = 16
+    versionLabel.TextSize = 14
     versionLabel.TextColor3 = COLORS.Accent
     versionLabel.Parent = creditsContainer
     
     -- Creator Section
     local creatorTitle = Instance.new("TextLabel")
-    creatorTitle.Size = UDim2.new(1, 0, 0, 25)
-    creatorTitle.Position = UDim2.new(0, 0, 0, 270)
+    creatorTitle.Size = UDim2.new(1, 0, 0, 20)
+    creatorTitle.Position = UDim2.new(0, 0, 0, 230)
     creatorTitle.BackgroundTransparency = 1
     creatorTitle.Text = "CREATED BY"
     creatorTitle.Font = Enum.Font.GothamBold
-    creatorTitle.TextSize = 14
+    creatorTitle.TextSize = 12
     creatorTitle.TextColor3 = COLORS.TextDim
     creatorTitle.Parent = creditsContainer
     
     local creatorName = Instance.new("TextLabel")
-    creatorName.Size = UDim2.new(1, 0, 0, 30)
-    creatorName.Position = UDim2.new(0, 0, 0, 295)
+    creatorName.Size = UDim2.new(1, 0, 0, 28)
+    creatorName.Position = UDim2.new(0, 0, 0, 250)
     creatorName.BackgroundTransparency = 1
     creatorName.Text = CONFIG.Creator
     creatorName.Font = Enum.Font.GothamBold
-    creatorName.TextSize = 24
+    creatorName.TextSize = 22
     creatorName.TextColor3 = COLORS.Text
     creatorName.Parent = creditsContainer
     
-    -- Discord Section
+    -- Discord Container
     local discordContainer = Instance.new("Frame")
-    discordContainer.Size = UDim2.new(0, 400, 0, 60)
-    discordContainer.Position = UDim2.new(0.5, -200, 0, 350)
+    discordContainer.Size = UDim2.new(1, -40, 0, 70)
+    discordContainer.Position = UDim2.new(0, 20, 0, 300)
     discordContainer.BackgroundColor3 = COLORS.Secondary
     discordContainer.BorderSizePixel = 0
     discordContainer.Parent = creditsContainer
@@ -548,55 +515,54 @@ local function CreateCreditsContent()
     
     -- Discord Icon
     local discordIcon = Instance.new("TextLabel")
-    discordIcon.Size = UDim2.new(0, 40, 0, 40)
-    discordIcon.Position = UDim2.new(0, 15, 0.5, -20)
+    discordIcon.Size = UDim2.new(0, 45, 0, 45)
+    discordIcon.Position = UDim2.new(0, 12, 0.5, -22)
     discordIcon.BackgroundColor3 = Color3.fromRGB(88, 101, 242)
     discordIcon.BorderSizePixel = 0
     discordIcon.Text = "D"
     discordIcon.Font = Enum.Font.GothamBold
-    discordIcon.TextSize = 22
+    discordIcon.TextSize = 24
     discordIcon.TextColor3 = Color3.fromRGB(255, 255, 255)
     discordIcon.Parent = discordContainer
     CreateUICorner(8).Parent = discordIcon
     
-    -- Discord Label
+    -- Discord Info
     local discordLabel = Instance.new("TextLabel")
-    discordLabel.Size = UDim2.new(0, 100, 0, 20)
-    discordLabel.Position = UDim2.new(0, 65, 0, 10)
+    discordLabel.Size = UDim2.new(0, 150, 0, 18)
+    discordLabel.Position = UDim2.new(0, 65, 0, 12)
     discordLabel.BackgroundTransparency = 1
-    discordLabel.Text = "DISCORD"
+    discordLabel.Text = "JOIN DISCORD"
     discordLabel.Font = Enum.Font.GothamBold
-    discordLabel.TextSize = 12
+    discordLabel.TextSize = 11
     discordLabel.TextColor3 = COLORS.TextDim
     discordLabel.TextXAlignment = Enum.TextXAlignment.Left
     discordLabel.Parent = discordContainer
     
-    -- Discord Link
     local discordLink = Instance.new("TextLabel")
-    discordLink.Size = UDim2.new(1, -70, 0, 25)
-    discordLink.Position = UDim2.new(0, 65, 0, 28)
+    discordLink.Size = UDim2.new(1, -160, 0, 22)
+    discordLink.Position = UDim2.new(0, 65, 0, 30)
     discordLink.BackgroundTransparency = 1
-    discordLink.Text = https://discord.gg/7PvUFqv6JC
+    discordLink.Text = CONFIG.Discord
     discordLink.Font = Enum.Font.GothamBold
-    discordLink.TextSize = 16
+    discordLink.TextSize = 15
     discordLink.TextColor3 = Color3.fromRGB(88, 101, 242)
     discordLink.TextXAlignment = Enum.TextXAlignment.Left
+    discordLink.TextTruncate = Enum.TextTruncate.AtEnd
     discordLink.Parent = discordContainer
-    
     
     -- Copy Button
     local copyButton = Instance.new("TextButton")
-    copyButton.Size = UDim2.new(0, 80, 0, 40)
-    copyButton.Position = UDim2.new(1, -95, 0.5, -20)
+    copyButton.Size = UDim2.new(0, 70, 0, 35)
+    copyButton.Position = UDim2.new(1, -82, 0.5, -17)
     copyButton.BackgroundColor3 = COLORS.Accent
     copyButton.BorderSizePixel = 0
     copyButton.Text = "COPY"
     copyButton.Font = Enum.Font.GothamBold
-    copyButton.TextSize = 12
+    copyButton.TextSize = 11
     copyButton.TextColor3 = Color3.fromRGB(255, 255, 255)
     copyButton.AutoButtonColor = false
     copyButton.Parent = discordContainer
-    CreateUICorner(8).Parent = copyButton
+    CreateUICorner(6).Parent = copyButton
     
     copyButton.MouseEnter:Connect(function()
         TweenObject(copyButton, {BackgroundColor3 = Color3.fromRGB(55, 150, 255)}, 0.2)
@@ -610,19 +576,19 @@ local function CreateCreditsContent()
         setclipboard(CONFIG.Discord)
         copyButton.Text = "COPIED!"
         TweenObject(copyButton, {BackgroundColor3 = COLORS.Success}, 0.2)
-        wait(2)
+        task.wait(2)
         copyButton.Text = "COPY"
         TweenObject(copyButton, {BackgroundColor3 = COLORS.Accent}, 0.2)
     end)
     
-    -- Thank You Message
+    -- Thank You
     local thankYou = Instance.new("TextLabel")
     thankYou.Size = UDim2.new(1, 0, 0, 25)
-    thankYou.Position = UDim2.new(0, 0, 1, -30)
+    thankYou.Position = UDim2.new(0, 0, 0, 390)
     thankYou.BackgroundTransparency = 1
-    thankYou.Text = "Thank you for using Kemerus Hub! ❤️"
+    thankYou.Text = "Thank you for using " .. CONFIG.HubTitle .. "!"
     thankYou.Font = Enum.Font.Gotham
-    thankYou.TextSize = 14
+    thankYou.TextSize = 13
     thankYou.TextColor3 = COLORS.TextDim
     thankYou.Parent = creditsContainer
 end
@@ -688,7 +654,7 @@ local function ShowNotification(message, isSuccess)
     InfoText.Text = message
     InfoText.TextColor3 = isSuccess and COLORS.Success or COLORS.Error
     
-    wait(2)
+    task.wait(2)
     if not isSuccess then
         InfoText.Text = "Enter your key to continue"
         InfoText.TextColor3 = COLORS.TextDim
@@ -706,12 +672,12 @@ SubmitButton.MouseButton1Click:Connect(function()
     if ValidateKey(key) then
         ShowNotification("Key validated! Loading...", true)
         
-        wait(0.5)
+        task.wait(0.5)
         
         -- Hide key frame
         TweenObject(KeyFrame, {Size = UDim2.new(0, 0, 0, 0)}, 0.3, Enum.EasingStyle.Back, Enum.EasingDirection.In)
         
-        wait(0.3)
+        task.wait(0.3)
         KeyFrame.Visible = false
         
         -- Show main frame
@@ -720,7 +686,7 @@ SubmitButton.MouseButton1Click:Connect(function()
         TweenObject(MainFrame, {Size = UDim2.new(0, CONFIG.DefaultSize.X, 0, CONFIG.DefaultSize.Y)}, 0.4, Enum.EasingStyle.Back, Enum.EasingDirection.Out)
         
         -- Select first tab
-        wait(0.2)
+        task.wait(0.2)
         SelectTab("Combat")
     else
         ShowNotification("Invalid key! Try again.", false)
@@ -738,11 +704,11 @@ end)
 -- Close Button Function
 CloseButton.MouseButton1Click:Connect(function()
     TweenObject(MainFrame, {Size = UDim2.new(0, 0, 0, 0)}, 0.3, Enum.EasingStyle.Back, Enum.EasingDirection.In)
-    wait(0.3)
+    task.wait(0.3)
     ScreenGui:Destroy()
 end)
 
--- DRAGGING SYSTEM (Mobile & PC Support)
+-- DRAGGING SYSTEM
 local dragging = false
 local dragInput, dragStart, startPos
 
@@ -758,7 +724,6 @@ local function updateDrag(input)
     )
 end
 
--- PC & Mobile Drag Support
 TopBar.InputBegan:Connect(function(input)
     if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
         dragging = true
@@ -813,7 +778,6 @@ UserInputService.InputChanged:Connect(function(input)
     end
 end)
 
--- Resize Handle Hover Effect
 ResizeHandle.MouseEnter:Connect(function()
     TweenObject(ResizeHandle, {Size = UDim2.new(0, 25, 0, 25)}, 0.2)
     TweenObject(ResizeHandle, {BackgroundColor3 = Color3.fromRGB(55, 150, 255)}, 0.2)
@@ -834,38 +798,29 @@ local function ToggleGUI()
     isHidden = not isHidden
     
     if isHidden then
-        -- Save current size before hiding
         savedSize = Vector2.new(MainFrame.Size.X.Offset, MainFrame.Size.Y.Offset)
         
-        -- Hide main frame
         TweenObject(MainFrame, {Size = UDim2.new(0, 0, 0, 0)}, 0.3, Enum.EasingStyle.Back, Enum.EasingDirection.In)
-        wait(0.3)
+        task.wait(0.3)
         MainFrame.Visible = false
         
-        -- Show floating button
         FloatingHideButton.Size = UDim2.new(0, 0, 0, 0)
         FloatingHideButton.Visible = true
         TweenObject(FloatingHideButton, {Size = UDim2.new(0, 50, 0, 50)}, 0.3, Enum.EasingStyle.Back, Enum.EasingDirection.Out)
     else
-        -- Hide floating button
         TweenObject(FloatingHideButton, {Size = UDim2.new(0, 0, 0, 0)}, 0.3, Enum.EasingStyle.Back, Enum.EasingDirection.In)
-        wait(0.3)
+        task.wait(0.3)
         FloatingHideButton.Visible = false
         
-        -- Show main frame with saved size
         MainFrame.Size = UDim2.new(0, 0, 0, 0)
         MainFrame.Visible = true
         TweenObject(MainFrame, {Size = UDim2.new(0, savedSize.X, 0, savedSize.Y)}, 0.3, Enum.EasingStyle.Back, Enum.EasingDirection.Out)
     end
 end
 
--- Hide button click
 HideButton.MouseButton1Click:Connect(ToggleGUI)
-
--- Floating button click
 FloatingHideButton.MouseButton1Click:Connect(ToggleGUI)
 
--- K key press to toggle
 UserInputService.InputBegan:Connect(function(input, gameProcessed)
     if gameProcessed then return end
     
@@ -876,7 +831,7 @@ UserInputService.InputBegan:Connect(function(input, gameProcessed)
     end
 end)
 
--- Floating Button Drag Support
+-- Floating Button Drag
 local floatingDragging = false
 local floatingDragStart, floatingStartPos
 
@@ -906,7 +861,6 @@ UserInputService.InputChanged:Connect(function(input)
     end
 end)
 
--- Floating Button Hover
 FloatingHideButton.MouseEnter:Connect(function()
     TweenObject(FloatingHideButton, {Size = UDim2.new(0, 55, 0, 55)}, 0.2)
     TweenObject(FloatingHideButton, {BackgroundColor3 = Color3.fromRGB(55, 150, 255)}, 0.2)
@@ -919,6 +873,5 @@ FloatingHideButton.MouseLeave:Connect(function()
     end
 end)
 
-print("Kemerus Hub v3.0 loaded successfully!")
-print("Key: " .. CONFIG.ValidKey)
-print("Features: Mobile/PC Drag, Hide (K key), Resizable GUI")
+print("Kemerus Hub v3.0 loaded!")
+print("Key: KEMERUS31")
