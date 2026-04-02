@@ -305,11 +305,11 @@ Sidebar.Parent = MainFrame
 
 -- Tab Data
 local TabData = {
-    {Name = "Combat", Icon = "C"},
-    {Name = "Players", Icon = "P"},
-    {Name = "Visuals", Icon = "V"},
-    {Name = "Misc", Icon = "M"},
-    {Name = "Credits", Icon = "★"}
+    {Name = "Combat", Icon = "🗡️"},
+    {Name = "Players", Icon = "👤"},
+    {Name = "Visuals", Icon = "👀"},
+    {Name = "Misc", Icon = "⚙️"},
+    {Name = "Credits", Icon = "⭐"}
 }
 
 local SelectedTab = nil
