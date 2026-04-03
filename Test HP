@@ -14,9 +14,9 @@ local CONFIG = {
     ValidKey = "KEMERUS31",
     HubTitle = "Kemerus Hub",
     Version = "v3.0",
-    MinSize = Vector2.new(400, 280),
-    MaxSize = Vector2.new(900, 600),
-    DefaultSize = isMobile and Vector2.new(480, 340) or Vector2.new(780, 520),
+    MinSize = isMobile and Vector2.new(420, 320) or Vector2.new(500, 380),   -- ← Diperbesar
+    MaxSize = Vector2.new(1000, 700),
+    DefaultSize = isMobile and Vector2.new(520, 380) or Vector2.new(780, 520),
     Creator = "Kemerus",
     Discord = "https://discord.gg/7PvUFqv6JC"
 }
@@ -63,7 +63,6 @@ local function TweenObject(object, properties, duration, style, direction)
     local tween = TweenService:Create(object, tweenInfo, properties)
     tween:Play()
     return tween
-end
 
 -- Key System GUI (Smaller for mobile)
 local keyFrameSize = isMobile and {340, 240} or {400, 280}
@@ -726,15 +725,6 @@ TopBar.InputBegan:Connect(function(input)
         dragging = true
         dragStart = input.Position
         startPos = MainFrame.Position
-        
-        -- Monitor input ini saja sampai selesai
-        local connection
-        connection = input.Changed:Connect(function()
-            if input.UserInputState == Enum.UserInputState.End then
-                dragging = false
-                connection:Disconnect()
-            end
-        end)
     end
 end)
 
@@ -750,6 +740,7 @@ local resizeStart, resizeStartSize
 
 local function updateResize(input)
     if not resizing then return end
+    
     local delta = input.Position - resizeStart
     local newWidth = math.clamp(resizeStartSize.X + delta.X, CONFIG.MinSize.X, CONFIG.MaxSize.X)
     local newHeight = math.clamp(resizeStartSize.Y + delta.Y, CONFIG.MinSize.Y, CONFIG.MaxSize.Y)
@@ -772,10 +763,10 @@ UserInputService.InputChanged:Connect(function(input)
 end)
 
 ResizeHandle.InputEnded:Connect(function(input)
-    if (input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch) then
+    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
         resizing = false
         if SelectedTab == "Credits" then
-            CreateCreditsContent()
+            CreateCreditsContent()  -- Refresh credits agar layout menyesuaikan
         end
     end
 end)
