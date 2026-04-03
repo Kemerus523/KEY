@@ -282,7 +282,7 @@ CloseButton.Size = UDim2.new(0, isMobile and 34 or 40, 0, isMobile and 34 or 40)
 CloseButton.Position = UDim2.new(1, isMobile and -45 or -55, 0.5, isMobile and -17 or -20)
 CloseButton.BackgroundColor3 = COLORS.Background
 CloseButton.BorderSizePixel = 0
-CloseButton.Text = "✕"
+CloseButton.Text = "❌"
 CloseButton.Font = Enum.Font.GothamBold
 CloseButton.TextSize = isMobile and 16 or 20
 CloseButton.TextColor3 = COLORS.Text
@@ -311,11 +311,11 @@ Sidebar.Parent = MainFrame
 
 -- Tab Data
 local TabData = {
-    {Name = "Combat", Icon = "C"},
-    {Name = "Players", Icon = "P"},
-    {Name = "Visuals", Icon = "V"},
-    {Name = "Misc", Icon = "M"},
-    {Name = "Credits", Icon = "★"}
+    {Name = "Combat", Icon = "🗡️"},
+    {Name = "Players", Icon = "👤"},
+    {Name = "Visuals", Icon = "👀"},
+    {Name = "Misc", Icon = "⚙️"},
+    {Name = "Credits", Icon = "⭐"}
 }
 
 local SelectedTab = nil
