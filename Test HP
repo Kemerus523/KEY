@@ -461,7 +461,6 @@ end
 
 -- Function to Create Credits Content
 local function CreateCreditsContent()
-    -- Clear existing content
     for _, child in pairs(ContentFrame:GetChildren()) do
         child:Destroy()
     end
@@ -547,11 +546,18 @@ local function CreateCreditsContent()
     discordContainer.Parent = creditsContainer
     CreateUICorner(isSmall and 8 or 10).Parent = discordContainer
     CreateUIStroke(COLORS.Border, 1).Parent = discordContainer
-    
+
+    local padding = Instance.new("UIPadding")
+    padding.PaddingLeft = UDim.new(0, isSmall and 12 or 15)
+    padding.PaddingRight = UDim.new(0, isSmall and 12 or 15)
+    padding.PaddingTop = UDim.new(0, 10)
+    padding.PaddingBottom = UDim.new(0, 10)
+    padding.Parent = discordContainer
+
     -- Discord Icon
     local discordIcon = Instance.new("TextLabel")
     discordIcon.Size = UDim2.new(0, isSmall and 38 or 45, 0, isSmall and 38 or 45)
-    discordIcon.Position = UDim2.new(0, isSmall and 10 or 12, 0.5, isSmall and -19 or -22)
+    discordIcon.Position = UDim2.new(0, 0, 0.5, isSmall and -19 or -22)
     discordIcon.BackgroundColor3 = Color3.fromRGB(88, 101, 242)
     discordIcon.BorderSizePixel = 0
     discordIcon.Text = "D"
@@ -562,20 +568,26 @@ local function CreateCreditsContent()
     CreateUICorner(isSmall and 7 or 8).Parent = discordIcon
     
     -- Discord Info
+    local textContainer = Instance.new("Frame")
+    textContainer.Size = UDim2.new(1, - (isSmall and 110 or 130), 1, 0)
+    textContainer.Position = UDim2.new(0, isSmall and 50 or 60, 0, 0)
+    textContainer.BackgroundTransparency = 1
+    textContainer.Parent = discordContainer
+
     local discordLabel = Instance.new("TextLabel")
-    discordLabel.Size = UDim2.new(0, 120, 0, isSmall and 14 or 18)
-    discordLabel.Position = UDim2.new(0, isSmall and 54 or 65, 0, isSmall and 10 or 12)
+    discordLabel.Size = UDim2.new(1, 0, 0, isSmall and 14 or 18)
+    discordLabel.Position = UDim2.new(0, 0, 0, isSmall and 8 or 12)
     discordLabel.BackgroundTransparency = 1
     discordLabel.Text = "JOIN DISCORD"
     discordLabel.Font = Enum.Font.GothamBold
     discordLabel.TextSize = isSmall and 9 or 11
     discordLabel.TextColor3 = COLORS.TextDim
     discordLabel.TextXAlignment = Enum.TextXAlignment.Left
-    discordLabel.Parent = discordContainer
-    
+    discordLabel.Parent = textContainer
+
     local discordLink = Instance.new("TextLabel")
-    discordLink.Size = UDim2.new(1, isSmall and -130 or -160, 0, isSmall and 18 or 22)
-    discordLink.Position = UDim2.new(0, isSmall and 54 or 65, 0, isSmall and 26 or 30)
+    discordLink.Size = UDim2.new(1, 0, 0, isSmall and 18 or 22)
+    discordLink.Position = UDim2.new(0, 0, 0, isSmall and 24 or 30)
     discordLink.BackgroundTransparency = 1
     discordLink.Text = CONFIG.Discord
     discordLink.Font = Enum.Font.GothamBold
@@ -583,12 +595,13 @@ local function CreateCreditsContent()
     discordLink.TextColor3 = Color3.fromRGB(88, 101, 242)
     discordLink.TextXAlignment = Enum.TextXAlignment.Left
     discordLink.TextTruncate = Enum.TextTruncate.AtEnd
-    discordLink.Parent = discordContainer
+    discordLink.Parent = textContainer
     
     -- Copy Button
     local copyButton = Instance.new("TextButton")
     copyButton.Size = UDim2.new(0, isSmall and 58 or 70, 0, isSmall and 30 or 35)
-    copyButton.Position = UDim2.new(1, isSmall and -68 or -82, 0.5, isSmall and -15 or -17)
+    copyButton.AnchorPoint = Vector2.new(1, 0.5)
+    copyButton.Position = UDim2.new(1, isSmall and -12 or -15, 0.5, 0)   -- Melekat di kanan dengan padding
     copyButton.BackgroundColor3 = COLORS.Accent
     copyButton.BorderSizePixel = 0
     copyButton.Text = "COPY"
@@ -602,11 +615,10 @@ local function CreateCreditsContent()
     copyButton.MouseEnter:Connect(function()
         TweenObject(copyButton, {BackgroundColor3 = Color3.fromRGB(55, 150, 255)}, 0.2)
     end)
-    
     copyButton.MouseLeave:Connect(function()
         TweenObject(copyButton, {BackgroundColor3 = COLORS.Accent}, 0.2)
     end)
-    
+
     copyButton.MouseButton1Click:Connect(function()
         setclipboard(CONFIG.Discord)
         copyButton.Text = "COPIED!"
