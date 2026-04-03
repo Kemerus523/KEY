@@ -7,14 +7,17 @@ local UserInputService = game:GetService("UserInputService")
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 
+-- Detect if mobile
+local isMobile = UserInputService.TouchEnabled and not UserInputService.KeyboardEnabled
+
 -- Configuration
 local CONFIG = {
     ValidKey = "KEMERUS31",
     HubTitle = "Kemerus Hub",
     Version = "v3.0",
-    MinSize = Vector2.new(600, 400),
-    MaxSize = Vector2.new(1000, 700),
-    DefaultSize = Vector2.new(780, 520),
+    MinSize = Vector2.new(400, 280),
+    MaxSize = Vector2.new(900, 600),
+    DefaultSize = isMobile and Vector2.new(480, 340) or Vector2.new(780, 520),
     Creator = "Kemerus",
     Discord = "https://discord.gg/7PvUFqv6JC"
 }
@@ -63,115 +66,116 @@ local function TweenObject(object, properties, duration, style, direction)
     return tween
 end
 
--- Key System GUI
+-- Key System GUI (Smaller for mobile)
+local keyFrameSize = isMobile and {340, 240} or {400, 280}
 local KeyFrame = Instance.new("Frame")
 KeyFrame.Name = "KeyFrame"
-KeyFrame.Size = UDim2.new(0, 400, 0, 280)
-KeyFrame.Position = UDim2.new(0.5, -200, 0.5, -140)
+KeyFrame.Size = UDim2.new(0, keyFrameSize[1], 0, keyFrameSize[2])
+KeyFrame.Position = UDim2.new(0.5, -keyFrameSize[1]/2, 0.5, -keyFrameSize[2]/2)
 KeyFrame.BackgroundColor3 = COLORS.Background
 KeyFrame.BorderSizePixel = 0
 KeyFrame.Parent = ScreenGui
-CreateUICorner(12).Parent = KeyFrame
+CreateUICorner(isMobile and 10 or 12).Parent = KeyFrame
 CreateUIStroke(COLORS.Border, 1).Parent = KeyFrame
 
 -- Logo Container
 local LogoContainer = Instance.new("Frame")
-LogoContainer.Size = UDim2.new(1, 0, 0, 80)
+LogoContainer.Size = UDim2.new(1, 0, 0, isMobile and 65 or 80)
 LogoContainer.BackgroundColor3 = COLORS.Secondary
 LogoContainer.BorderSizePixel = 0
 LogoContainer.Parent = KeyFrame
-CreateUICorner(12).Parent = LogoContainer
+CreateUICorner(isMobile and 10 or 12).Parent = LogoContainer
 
 local LogoBottomCover = Instance.new("Frame")
-LogoBottomCover.Size = UDim2.new(1, 0, 0, 12)
-LogoBottomCover.Position = UDim2.new(0, 0, 1, -12)
+LogoBottomCover.Size = UDim2.new(1, 0, 0, isMobile and 10 or 12)
+LogoBottomCover.Position = UDim2.new(0, 0, 1, isMobile and -10 or -12)
 LogoBottomCover.BackgroundColor3 = COLORS.Secondary
 LogoBottomCover.BorderSizePixel = 0
 LogoBottomCover.Parent = LogoContainer
 
 -- Logo Icon
 local LogoIcon = Instance.new("TextLabel")
-LogoIcon.Size = UDim2.new(0, 60, 0, 60)
-LogoIcon.Position = UDim2.new(0, 20, 0.5, -30)
+LogoIcon.Size = UDim2.new(0, isMobile and 50 or 60, 0, isMobile and 50 or 60)
+LogoIcon.Position = UDim2.new(0, isMobile and 15 or 20, 0.5, isMobile and -25 or -30)
 LogoIcon.BackgroundColor3 = COLORS.Accent
 LogoIcon.BorderSizePixel = 0
 LogoIcon.Text = "K"
 LogoIcon.Font = Enum.Font.GothamBold
-LogoIcon.TextSize = 32
+LogoIcon.TextSize = isMobile and 26 or 32
 LogoIcon.TextColor3 = Color3.fromRGB(255, 255, 255)
 LogoIcon.Parent = LogoContainer
-CreateUICorner(10).Parent = LogoIcon
+CreateUICorner(isMobile and 8 or 10).Parent = LogoIcon
 
 -- Title
 local Title = Instance.new("TextLabel")
-Title.Size = UDim2.new(1, -100, 0, 30)
-Title.Position = UDim2.new(0, 90, 0, 15)
+Title.Size = UDim2.new(1, isMobile and -75 or -100, 0, isMobile and 25 or 30)
+Title.Position = UDim2.new(0, isMobile and 70 or 90, 0, isMobile and 12 or 15)
 Title.BackgroundTransparency = 1
 Title.Text = CONFIG.HubTitle
 Title.Font = Enum.Font.GothamBold
-Title.TextSize = 24
+Title.TextSize = isMobile and 18 or 24
 Title.TextColor3 = COLORS.Text
 Title.TextXAlignment = Enum.TextXAlignment.Left
 Title.Parent = LogoContainer
 
 -- Version
 local Version = Instance.new("TextLabel")
-Version.Size = UDim2.new(1, -100, 0, 20)
-Version.Position = UDim2.new(0, 90, 0, 45)
+Version.Size = UDim2.new(1, isMobile and -75 or -100, 0, isMobile and 16 or 20)
+Version.Position = UDim2.new(0, isMobile and 70 or 90, 0, isMobile and 37 or 45)
 Version.BackgroundTransparency = 1
 Version.Text = CONFIG.Version
 Version.Font = Enum.Font.Gotham
-Version.TextSize = 14
+Version.TextSize = isMobile and 11 or 14
 Version.TextColor3 = COLORS.TextDim
 Version.TextXAlignment = Enum.TextXAlignment.Left
 Version.Parent = LogoContainer
 
 -- Info Text
 local InfoText = Instance.new("TextLabel")
-InfoText.Size = UDim2.new(1, -40, 0, 30)
-InfoText.Position = UDim2.new(0, 20, 0, 100)
+InfoText.Size = UDim2.new(1, -30, 0, 25)
+InfoText.Position = UDim2.new(0, 15, 0, isMobile and 80 or 100)
 InfoText.BackgroundTransparency = 1
 InfoText.Text = "Enter your key to continue"
 InfoText.Font = Enum.Font.Gotham
-InfoText.TextSize = 14
+InfoText.TextSize = isMobile and 11 or 14
 InfoText.TextColor3 = COLORS.TextDim
 InfoText.Parent = KeyFrame
 
 -- Key Input Box
 local KeyInputBox = Instance.new("TextBox")
-KeyInputBox.Size = UDim2.new(1, -40, 0, 45)
-KeyInputBox.Position = UDim2.new(0, 20, 0, 140)
+KeyInputBox.Size = UDim2.new(1, -30, 0, isMobile and 38 or 45)
+KeyInputBox.Position = UDim2.new(0, 15, 0, isMobile and 110 or 140)
 KeyInputBox.BackgroundColor3 = COLORS.Secondary
 KeyInputBox.BorderSizePixel = 0
 KeyInputBox.PlaceholderText = "Enter key here..."
 KeyInputBox.PlaceholderColor3 = COLORS.TextDim
 KeyInputBox.Text = ""
 KeyInputBox.Font = Enum.Font.Gotham
-KeyInputBox.TextSize = 14
+KeyInputBox.TextSize = isMobile and 11 or 14
 KeyInputBox.TextColor3 = COLORS.Text
 KeyInputBox.ClearTextOnFocus = false
 KeyInputBox.Parent = KeyFrame
-CreateUICorner(8).Parent = KeyInputBox
+CreateUICorner(isMobile and 6 or 8).Parent = KeyInputBox
 CreateUIStroke(COLORS.Border, 1).Parent = KeyInputBox
 
 local KeyInputPadding = Instance.new("UIPadding")
-KeyInputPadding.PaddingLeft = UDim.new(0, 15)
-KeyInputPadding.PaddingRight = UDim.new(0, 15)
+KeyInputPadding.PaddingLeft = UDim.new(0, isMobile and 12 or 15)
+KeyInputPadding.PaddingRight = UDim.new(0, isMobile and 12 or 15)
 KeyInputPadding.Parent = KeyInputBox
 
 -- Submit Button
 local SubmitButton = Instance.new("TextButton")
-SubmitButton.Size = UDim2.new(1, -40, 0, 45)
-SubmitButton.Position = UDim2.new(0, 20, 0, 200)
+SubmitButton.Size = UDim2.new(1, -30, 0, isMobile and 38 or 45)
+SubmitButton.Position = UDim2.new(0, 15, 0, isMobile and 158 or 200)
 SubmitButton.BackgroundColor3 = COLORS.Accent
 SubmitButton.BorderSizePixel = 0
 SubmitButton.Text = "SUBMIT KEY"
 SubmitButton.Font = Enum.Font.GothamBold
-SubmitButton.TextSize = 14
+SubmitButton.TextSize = isMobile and 11 or 14
 SubmitButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 SubmitButton.AutoButtonColor = false
 SubmitButton.Parent = KeyFrame
-CreateUICorner(8).Parent = SubmitButton
+CreateUICorner(isMobile and 6 or 8).Parent = SubmitButton
 
 -- Button Hover Effect
 SubmitButton.MouseEnter:Connect(function()
@@ -192,75 +196,76 @@ MainFrame.BorderSizePixel = 0
 MainFrame.Visible = false
 MainFrame.ClipsDescendants = false
 MainFrame.Parent = ScreenGui
-CreateUICorner(12).Parent = MainFrame
+CreateUICorner(isMobile and 10 or 12).Parent = MainFrame
 CreateUIStroke(COLORS.Border, 1).Parent = MainFrame
 
 -- Top Bar
+local topBarHeight = isMobile and 50 or 60
 local TopBar = Instance.new("Frame")
 TopBar.Name = "TopBar"
-TopBar.Size = UDim2.new(1, 0, 0, 60)
+TopBar.Size = UDim2.new(1, 0, 0, topBarHeight)
 TopBar.BackgroundColor3 = COLORS.Secondary
 TopBar.BorderSizePixel = 0
 TopBar.Parent = MainFrame
-CreateUICorner(12).Parent = TopBar
+CreateUICorner(isMobile and 10 or 12).Parent = TopBar
 
 local TopBarCover = Instance.new("Frame")
-TopBarCover.Size = UDim2.new(1, 0, 0, 12)
-TopBarCover.Position = UDim2.new(0, 0, 1, -12)
+TopBarCover.Size = UDim2.new(1, 0, 0, isMobile and 10 or 12)
+TopBarCover.Position = UDim2.new(0, 0, 1, isMobile and -10 or -12)
 TopBarCover.BackgroundColor3 = COLORS.Secondary
 TopBarCover.BorderSizePixel = 0
 TopBarCover.Parent = TopBar
 
 -- Hub Icon in Top Bar
 local HubIcon = Instance.new("TextLabel")
-HubIcon.Size = UDim2.new(0, 40, 0, 40)
-HubIcon.Position = UDim2.new(0, 15, 0.5, -20)
+HubIcon.Size = UDim2.new(0, isMobile and 34 or 40, 0, isMobile and 34 or 40)
+HubIcon.Position = UDim2.new(0, isMobile and 10 or 15, 0.5, isMobile and -17 or -20)
 HubIcon.BackgroundColor3 = COLORS.Accent
 HubIcon.BorderSizePixel = 0
 HubIcon.Text = "K"
 HubIcon.Font = Enum.Font.GothamBold
-HubIcon.TextSize = 22
+HubIcon.TextSize = isMobile and 18 or 22
 HubIcon.TextColor3 = Color3.fromRGB(255, 255, 255)
 HubIcon.Parent = TopBar
-CreateUICorner(8).Parent = HubIcon
+CreateUICorner(isMobile and 7 or 8).Parent = HubIcon
 
 -- Hub Title in Top Bar
 local HubTitle = Instance.new("TextLabel")
-HubTitle.Size = UDim2.new(0, 200, 0, 25)
-HubTitle.Position = UDim2.new(0, 65, 0, 10)
+HubTitle.Size = UDim2.new(0, 150, 0, 22)
+HubTitle.Position = UDim2.new(0, isMobile and 50 or 65, 0, isMobile and 8 or 10)
 HubTitle.BackgroundTransparency = 1
 HubTitle.Text = CONFIG.HubTitle
 HubTitle.Font = Enum.Font.GothamBold
-HubTitle.TextSize = 18
+HubTitle.TextSize = isMobile and 14 or 18
 HubTitle.TextColor3 = COLORS.Text
 HubTitle.TextXAlignment = Enum.TextXAlignment.Left
 HubTitle.Parent = TopBar
 
 -- User Info
 local UserInfo = Instance.new("TextLabel")
-UserInfo.Size = UDim2.new(0, 200, 0, 20)
-UserInfo.Position = UDim2.new(0, 65, 0, 32)
+UserInfo.Size = UDim2.new(0, 180, 0, 18)
+UserInfo.Position = UDim2.new(0, isMobile and 50 or 65, 0, isMobile and 26 or 32)
 UserInfo.BackgroundTransparency = 1
 UserInfo.Text = LocalPlayer.Name .. " • " .. CONFIG.Version
 UserInfo.Font = Enum.Font.Gotham
-UserInfo.TextSize = 12
+UserInfo.TextSize = isMobile and 9 or 12
 UserInfo.TextColor3 = COLORS.TextDim
 UserInfo.TextXAlignment = Enum.TextXAlignment.Left
 UserInfo.Parent = TopBar
 
 -- Hide Button (K)
 local HideButton = Instance.new("TextButton")
-HideButton.Size = UDim2.new(0, 40, 0, 40)
-HideButton.Position = UDim2.new(1, -105, 0.5, -20)
+HideButton.Size = UDim2.new(0, isMobile and 34 or 40, 0, isMobile and 34 or 40)
+HideButton.Position = UDim2.new(1, isMobile and -85 or -105, 0.5, isMobile and -17 or -20)
 HideButton.BackgroundColor3 = COLORS.Background
 HideButton.BorderSizePixel = 0
 HideButton.Text = "K"
 HideButton.Font = Enum.Font.GothamBold
-HideButton.TextSize = 18
+HideButton.TextSize = isMobile and 14 or 18
 HideButton.TextColor3 = COLORS.Accent
 HideButton.AutoButtonColor = false
 HideButton.Parent = TopBar
-CreateUICorner(8).Parent = HideButton
+CreateUICorner(isMobile and 7 or 8).Parent = HideButton
 CreateUIStroke(COLORS.Border, 1).Parent = HideButton
 
 HideButton.MouseEnter:Connect(function()
@@ -273,17 +278,17 @@ end)
 
 -- Close Button
 local CloseButton = Instance.new("TextButton")
-CloseButton.Size = UDim2.new(0, 40, 0, 40)
-CloseButton.Position = UDim2.new(1, -55, 0.5, -20)
+CloseButton.Size = UDim2.new(0, isMobile and 34 or 40, 0, isMobile and 34 or 40)
+CloseButton.Position = UDim2.new(1, isMobile and -45 or -55, 0.5, isMobile and -17 or -20)
 CloseButton.BackgroundColor3 = COLORS.Background
 CloseButton.BorderSizePixel = 0
 CloseButton.Text = "✕"
 CloseButton.Font = Enum.Font.GothamBold
-CloseButton.TextSize = 20
+CloseButton.TextSize = isMobile and 16 or 20
 CloseButton.TextColor3 = COLORS.Text
 CloseButton.AutoButtonColor = false
 CloseButton.Parent = TopBar
-CreateUICorner(8).Parent = CloseButton
+CreateUICorner(isMobile and 7 or 8).Parent = CloseButton
 CreateUIStroke(COLORS.Border, 1).Parent = CloseButton
 
 CloseButton.MouseEnter:Connect(function()
@@ -295,21 +300,22 @@ CloseButton.MouseLeave:Connect(function()
 end)
 
 -- Sidebar
+local sidebarWidth = isMobile and 110 or 150
 local Sidebar = Instance.new("Frame")
 Sidebar.Name = "Sidebar"
-Sidebar.Size = UDim2.new(0, 150, 1, -70)
-Sidebar.Position = UDim2.new(0, 10, 0, 65)
+Sidebar.Size = UDim2.new(0, sidebarWidth, 1, topBarHeight + 10)
+Sidebar.Position = UDim2.new(0, isMobile and 6 or 10, 0, topBarHeight + 5)
 Sidebar.BackgroundTransparency = 1
 Sidebar.BorderSizePixel = 0
 Sidebar.Parent = MainFrame
 
 -- Tab Data
 local TabData = {
-    {Name = "Combat", Icon = "🗡️"},
-    {Name = "Players", Icon = "👤"},
-    {Name = "Visuals", Icon = "👀"},
-    {Name = "Misc", Icon = "⚙️"},
-    {Name = "Credits", Icon = "⭐"}
+    {Name = "Combat", Icon = "C"},
+    {Name = "Players", Icon = "P"},
+    {Name = "Visuals", Icon = "V"},
+    {Name = "Misc", Icon = "M"},
+    {Name = "Credits", Icon = "★"}
 }
 
 local SelectedTab = nil
@@ -318,8 +324,8 @@ local TabButtons = {}
 -- Content Frame
 local ContentFrame = Instance.new("Frame")
 ContentFrame.Name = "ContentFrame"
-ContentFrame.Size = UDim2.new(1, -175, 1, -70)
-ContentFrame.Position = UDim2.new(0, 165, 0, 65)
+ContentFrame.Size = UDim2.new(1, -(sidebarWidth + (isMobile and 18 or 25)), 1, topBarHeight + 10)
+ContentFrame.Position = UDim2.new(0, sidebarWidth + (isMobile and 12 or 15), 0, topBarHeight + 5)
 ContentFrame.BackgroundTransparency = 1
 ContentFrame.BorderSizePixel = 0
 ContentFrame.Parent = MainFrame
@@ -327,80 +333,80 @@ ContentFrame.Parent = MainFrame
 -- Resize Handle
 local ResizeHandle = Instance.new("TextButton")
 ResizeHandle.Name = "ResizeHandle"
-ResizeHandle.Size = UDim2.new(0, 20, 0, 20)
-ResizeHandle.Position = UDim2.new(1, -10, 1, -10)
+ResizeHandle.Size = UDim2.new(0, isMobile and 16 or 20, 0, isMobile and 16 or 20)
+ResizeHandle.Position = UDim2.new(1, isMobile and -8 or -10, 1, isMobile and -8 or -10)
 ResizeHandle.AnchorPoint = Vector2.new(0.5, 0.5)
 ResizeHandle.BackgroundColor3 = COLORS.Accent
 ResizeHandle.BorderSizePixel = 0
 ResizeHandle.Text = "◢"
 ResizeHandle.Font = Enum.Font.GothamBold
-ResizeHandle.TextSize = 12
+ResizeHandle.TextSize = isMobile and 10 or 12
 ResizeHandle.TextColor3 = Color3.fromRGB(255, 255, 255)
 ResizeHandle.AutoButtonColor = false
 ResizeHandle.ZIndex = 10
 ResizeHandle.Parent = MainFrame
-CreateUICorner(10).Parent = ResizeHandle
+CreateUICorner(isMobile and 8 or 10).Parent = ResizeHandle
 
 -- Floating Hide Button
 local FloatingHideButton = Instance.new("TextButton")
 FloatingHideButton.Name = "FloatingHideButton"
-FloatingHideButton.Size = UDim2.new(0, 50, 0, 50)
-FloatingHideButton.Position = UDim2.new(0, 20, 0, 100)
+FloatingHideButton.Size = UDim2.new(0, isMobile and 45 or 50, 0, isMobile and 45 or 50)
+FloatingHideButton.Position = UDim2.new(0, isMobile and 15 or 20, 0, isMobile and 80 or 100)
 FloatingHideButton.BackgroundColor3 = COLORS.Accent
 FloatingHideButton.BorderSizePixel = 0
 FloatingHideButton.Text = "K"
 FloatingHideButton.Font = Enum.Font.GothamBold
-FloatingHideButton.TextSize = 24
+FloatingHideButton.TextSize = isMobile and 20 or 24
 FloatingHideButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 FloatingHideButton.AutoButtonColor = false
 FloatingHideButton.Visible = false
 FloatingHideButton.ZIndex = 100
 FloatingHideButton.Parent = ScreenGui
-CreateUICorner(25).Parent = FloatingHideButton
-CreateUIStroke(COLORS.Border, 2).Parent = FloatingHideButton
+CreateUICorner(isMobile and 22 or 25).Parent = FloatingHideButton
+CreateUIStroke(COLORS.Border, isMobile and 1.5 or 2).Parent = FloatingHideButton
 
 -- Function to Create Tab Button
 local function CreateTabButton(tabData, index)
     local button = Instance.new("TextButton")
-    button.Size = UDim2.new(1, 0, 0, 45)
-    button.Position = UDim2.new(0, 0, 0, (index - 1) * 50)
+    button.Size = UDim2.new(1, 0, 0, isMobile and 38 or 45)
+    button.Position = UDim2.new(0, 0, 0, (index - 1) * (isMobile and 42 or 50))
     button.BackgroundColor3 = COLORS.Secondary
     button.BorderSizePixel = 0
     button.Text = ""
     button.AutoButtonColor = false
     button.Parent = Sidebar
-    CreateUICorner(8).Parent = button
+    CreateUICorner(isMobile and 6 or 8).Parent = button
     
     local icon = Instance.new("TextLabel")
-    icon.Size = UDim2.new(0, 25, 0, 25)
-    icon.Position = UDim2.new(0, 12, 0.5, -12)
+    icon.Size = UDim2.new(0, isMobile and 20 or 25, 0, isMobile and 20 or 25)
+    icon.Position = UDim2.new(0, isMobile and 8 or 12, 0.5, isMobile and -10 or -12)
     icon.BackgroundTransparency = 1
     icon.Text = tabData.Icon
     icon.Font = Enum.Font.GothamBold
-    icon.TextSize = 18
+    icon.TextSize = isMobile and 14 or 18
     icon.TextColor3 = COLORS.TextDim
     icon.Parent = button
     
     local label = Instance.new("TextLabel")
-    label.Size = UDim2.new(1, -50, 1, 0)
-    label.Position = UDim2.new(0, 45, 0, 0)
+    label.Size = UDim2.new(1, isMobile and -36 or -50, 1, 0)
+    label.Position = UDim2.new(0, isMobile and 32 or 45, 0, 0)
     label.BackgroundTransparency = 1
     label.Text = tabData.Name
     label.Font = Enum.Font.GothamMedium
-    label.TextSize = 13
+    label.TextSize = isMobile and 10 or 13
     label.TextColor3 = COLORS.TextDim
     label.TextXAlignment = Enum.TextXAlignment.Left
     label.Parent = button
     
     -- Selection Indicator
     local indicator = Instance.new("Frame")
-    indicator.Size = UDim2.new(0, 3, 0, 0)
+    indicator.Size = UDim2.new(0, isMobile and 2.5 or 3, 0, 0)
     indicator.Position = UDim2.new(0, 0, 0.5, 0)
     indicator.AnchorPoint = Vector2.new(0, 0.5)
     indicator.BackgroundColor3 = COLORS.Accent
     indicator.BorderSizePixel = 0
     indicator.Parent = button
-    CreateUICorner(2).Parent = indicator
+    CreateUICorner(isMobile and 1.5 or 2).Parent = indicator
     
     TabButtons[tabData.Name] = {
         Button = button,
@@ -435,116 +441,116 @@ local function CreateCreditsContent()
     
     -- Credits Container
     local creditsContainer = Instance.new("ScrollingFrame")
-    creditsContainer.Size = UDim2.new(1, -20, 1, -20)
-    creditsContainer.Position = UDim2.new(0, 10, 0, 10)
+    creditsContainer.Size = UDim2.new(1, isMobile and -12 or -20, 1, isMobile and -12 or -20)
+    creditsContainer.Position = UDim2.new(0, isMobile and 6 or 10, 0, isMobile and 6 or 10)
     creditsContainer.BackgroundTransparency = 1
     creditsContainer.BorderSizePixel = 0
-    creditsContainer.ScrollBarThickness = 4
-    creditsContainer.CanvasSize = UDim2.new(0, 0, 0, 450)
+    creditsContainer.ScrollBarThickness = isMobile and 3 or 4
+    creditsContainer.CanvasSize = UDim2.new(0, 0, 0, isMobile and 380 or 450)
     creditsContainer.Parent = ContentFrame
     
     -- Creator Logo
     local creatorLogo = Instance.new("TextLabel")
-    creatorLogo.Size = UDim2.new(0, 100, 0, 100)
-    creatorLogo.Position = UDim2.new(0.5, -50, 0, 30)
+    creatorLogo.Size = UDim2.new(0, isMobile and 70 or 100, 0, isMobile and 70 or 100)
+    creatorLogo.Position = UDim2.new(0.5, isMobile and -35 or -50, 0, isMobile and 20 or 30)
     creatorLogo.BackgroundColor3 = COLORS.Accent
     creatorLogo.BorderSizePixel = 0
     creatorLogo.Text = "K"
     creatorLogo.Font = Enum.Font.GothamBold
-    creatorLogo.TextSize = 56
+    creatorLogo.TextSize = isMobile and 38 or 56
     creatorLogo.TextColor3 = Color3.fromRGB(255, 255, 255)
     creatorLogo.Parent = creditsContainer
-    CreateUICorner(50).Parent = creatorLogo
+    CreateUICorner(isMobile and 35 or 50).Parent = creatorLogo
     
-    local logoGlow = CreateUIStroke(COLORS.Accent, 3)
+    local logoGlow = CreateUIStroke(COLORS.Accent, isMobile and 2 or 3)
     logoGlow.Transparency = 0.5
     logoGlow.Parent = creatorLogo
     
     -- Hub Name
     local hubName = Instance.new("TextLabel")
-    hubName.Size = UDim2.new(1, 0, 0, 35)
-    hubName.Position = UDim2.new(0, 0, 0, 150)
+    hubName.Size = UDim2.new(1, 0, 0, isMobile and 28 or 35)
+    hubName.Position = UDim2.new(0, 0, 0, isMobile and 105 or 150)
     hubName.BackgroundTransparency = 1
     hubName.Text = CONFIG.HubTitle
     hubName.Font = Enum.Font.GothamBold
-    hubName.TextSize = 28
+    hubName.TextSize = isMobile and 20 or 28
     hubName.TextColor3 = COLORS.Text
     hubName.Parent = creditsContainer
     
     -- Version
     local versionLabel = Instance.new("TextLabel")
-    versionLabel.Size = UDim2.new(1, 0, 0, 20)
-    versionLabel.Position = UDim2.new(0, 0, 0, 190)
+    versionLabel.Size = UDim2.new(1, 0, 0, isMobile and 16 or 20)
+    versionLabel.Position = UDim2.new(0, 0, 0, isMobile and 135 or 190)
     versionLabel.BackgroundTransparency = 1
     versionLabel.Text = CONFIG.Version
     versionLabel.Font = Enum.Font.Gotham
-    versionLabel.TextSize = 14
+    versionLabel.TextSize = isMobile and 11 or 14
     versionLabel.TextColor3 = COLORS.Accent
     versionLabel.Parent = creditsContainer
     
     -- Creator Section
     local creatorTitle = Instance.new("TextLabel")
-    creatorTitle.Size = UDim2.new(1, 0, 0, 20)
-    creatorTitle.Position = UDim2.new(0, 0, 0, 230)
+    creatorTitle.Size = UDim2.new(1, 0, 0, isMobile and 16 or 20)
+    creatorTitle.Position = UDim2.new(0, 0, 0, isMobile and 165 or 230)
     creatorTitle.BackgroundTransparency = 1
     creatorTitle.Text = "CREATED BY"
     creatorTitle.Font = Enum.Font.GothamBold
-    creatorTitle.TextSize = 12
+    creatorTitle.TextSize = isMobile and 10 or 12
     creatorTitle.TextColor3 = COLORS.TextDim
     creatorTitle.Parent = creditsContainer
     
     local creatorName = Instance.new("TextLabel")
-    creatorName.Size = UDim2.new(1, 0, 0, 28)
-    creatorName.Position = UDim2.new(0, 0, 0, 250)
+    creatorName.Size = UDim2.new(1, 0, 0, isMobile and 22 or 28)
+    creatorName.Position = UDim2.new(0, 0, 0, isMobile and 182 or 250)
     creatorName.BackgroundTransparency = 1
     creatorName.Text = CONFIG.Creator
     creatorName.Font = Enum.Font.GothamBold
-    creatorName.TextSize = 22
+    creatorName.TextSize = isMobile and 16 or 22
     creatorName.TextColor3 = COLORS.Text
     creatorName.Parent = creditsContainer
     
     -- Discord Container
     local discordContainer = Instance.new("Frame")
-    discordContainer.Size = UDim2.new(1, -40, 0, 70)
-    discordContainer.Position = UDim2.new(0, 20, 0, 300)
+    discordContainer.Size = UDim2.new(1, isMobile and -24 or -40, 0, isMobile and 60 or 70)
+    discordContainer.Position = UDim2.new(0, isMobile and 12 or 20, 0, isMobile and 220 or 300)
     discordContainer.BackgroundColor3 = COLORS.Secondary
     discordContainer.BorderSizePixel = 0
     discordContainer.Parent = creditsContainer
-    CreateUICorner(10).Parent = discordContainer
+    CreateUICorner(isMobile and 8 or 10).Parent = discordContainer
     CreateUIStroke(COLORS.Border, 1).Parent = discordContainer
     
     -- Discord Icon
     local discordIcon = Instance.new("TextLabel")
-    discordIcon.Size = UDim2.new(0, 45, 0, 45)
-    discordIcon.Position = UDim2.new(0, 12, 0.5, -22)
+    discordIcon.Size = UDim2.new(0, isMobile and 38 or 45, 0, isMobile and 38 or 45)
+    discordIcon.Position = UDim2.new(0, isMobile and 10 or 12, 0.5, isMobile and -19 or -22)
     discordIcon.BackgroundColor3 = Color3.fromRGB(88, 101, 242)
     discordIcon.BorderSizePixel = 0
     discordIcon.Text = "D"
     discordIcon.Font = Enum.Font.GothamBold
-    discordIcon.TextSize = 24
+    discordIcon.TextSize = isMobile and 20 or 24
     discordIcon.TextColor3 = Color3.fromRGB(255, 255, 255)
     discordIcon.Parent = discordContainer
-    CreateUICorner(8).Parent = discordIcon
+    CreateUICorner(isMobile and 7 or 8).Parent = discordIcon
     
     -- Discord Info
     local discordLabel = Instance.new("TextLabel")
-    discordLabel.Size = UDim2.new(0, 150, 0, 18)
-    discordLabel.Position = UDim2.new(0, 65, 0, 12)
+    discordLabel.Size = UDim2.new(0, 120, 0, isMobile and 14 or 18)
+    discordLabel.Position = UDim2.new(0, isMobile and 54 or 65, 0, isMobile and 10 or 12)
     discordLabel.BackgroundTransparency = 1
     discordLabel.Text = "JOIN DISCORD"
     discordLabel.Font = Enum.Font.GothamBold
-    discordLabel.TextSize = 11
+    discordLabel.TextSize = isMobile and 9 or 11
     discordLabel.TextColor3 = COLORS.TextDim
     discordLabel.TextXAlignment = Enum.TextXAlignment.Left
     discordLabel.Parent = discordContainer
     
     local discordLink = Instance.new("TextLabel")
-    discordLink.Size = UDim2.new(1, -160, 0, 22)
-    discordLink.Position = UDim2.new(0, 65, 0, 30)
+    discordLink.Size = UDim2.new(1, isMobile and -130 or -160, 0, isMobile and 18 or 22)
+    discordLink.Position = UDim2.new(0, isMobile and 54 or 65, 0, isMobile and 26 or 30)
     discordLink.BackgroundTransparency = 1
     discordLink.Text = CONFIG.Discord
     discordLink.Font = Enum.Font.GothamBold
-    discordLink.TextSize = 15
+    discordLink.TextSize = isMobile and 11 or 15
     discordLink.TextColor3 = Color3.fromRGB(88, 101, 242)
     discordLink.TextXAlignment = Enum.TextXAlignment.Left
     discordLink.TextTruncate = Enum.TextTruncate.AtEnd
@@ -552,17 +558,17 @@ local function CreateCreditsContent()
     
     -- Copy Button
     local copyButton = Instance.new("TextButton")
-    copyButton.Size = UDim2.new(0, 70, 0, 35)
-    copyButton.Position = UDim2.new(1, -82, 0.5, -17)
+    copyButton.Size = UDim2.new(0, isMobile and 58 or 70, 0, isMobile and 30 or 35)
+    copyButton.Position = UDim2.new(1, isMobile and -68 or -82, 0.5, isMobile and -15 or -17)
     copyButton.BackgroundColor3 = COLORS.Accent
     copyButton.BorderSizePixel = 0
     copyButton.Text = "COPY"
     copyButton.Font = Enum.Font.GothamBold
-    copyButton.TextSize = 11
+    copyButton.TextSize = isMobile and 9 or 11
     copyButton.TextColor3 = Color3.fromRGB(255, 255, 255)
     copyButton.AutoButtonColor = false
     copyButton.Parent = discordContainer
-    CreateUICorner(6).Parent = copyButton
+    CreateUICorner(isMobile and 5 or 6).Parent = copyButton
     
     copyButton.MouseEnter:Connect(function()
         TweenObject(copyButton, {BackgroundColor3 = Color3.fromRGB(55, 150, 255)}, 0.2)
@@ -583,12 +589,12 @@ local function CreateCreditsContent()
     
     -- Thank You
     local thankYou = Instance.new("TextLabel")
-    thankYou.Size = UDim2.new(1, 0, 0, 25)
-    thankYou.Position = UDim2.new(0, 0, 0, 390)
+    thankYou.Size = UDim2.new(1, 0, 0, isMobile and 20 or 25)
+    thankYou.Position = UDim2.new(0, 0, 0, isMobile and 295 or 390)
     thankYou.BackgroundTransparency = 1
     thankYou.Text = "Thank you for using " .. CONFIG.HubTitle .. "!"
     thankYou.Font = Enum.Font.Gotham
-    thankYou.TextSize = 13
+    thankYou.TextSize = isMobile and 10 or 13
     thankYou.TextColor3 = COLORS.TextDim
     thankYou.Parent = creditsContainer
 end
@@ -603,7 +609,7 @@ function SelectTab(tabName)
         TweenObject(prev.Button, {BackgroundColor3 = COLORS.Secondary}, 0.2)
         TweenObject(prev.Icon, {TextColor3 = COLORS.TextDim}, 0.2)
         TweenObject(prev.Label, {TextColor3 = COLORS.TextDim}, 0.2)
-        TweenObject(prev.Indicator, {Size = UDim2.new(0, 3, 0, 0)}, 0.3)
+        TweenObject(prev.Indicator, {Size = UDim2.new(0, isMobile and 2.5 or 3, 0, 0)}, 0.3)
     end
     
     -- Select new tab
@@ -612,7 +618,7 @@ function SelectTab(tabName)
     TweenObject(current.Button, {BackgroundColor3 = Color3.fromRGB(35, 35, 45)}, 0.2)
     TweenObject(current.Icon, {TextColor3 = COLORS.Accent}, 0.2)
     TweenObject(current.Label, {TextColor3 = COLORS.Text}, 0.2)
-    TweenObject(current.Indicator, {Size = UDim2.new(0, 3, 1, -10)}, 0.3, Enum.EasingStyle.Back)
+    TweenObject(current.Indicator, {Size = UDim2.new(0, isMobile and 2.5 or 3, 1, isMobile and -8 or -10)}, 0.3, Enum.EasingStyle.Back)
     
     -- Update content
     UpdateContent(tabName)
@@ -634,7 +640,7 @@ function UpdateContent(tabName)
         placeholder.BackgroundTransparency = 1
         placeholder.Text = tabName .. " Tab\n\nContent will be added here"
         placeholder.Font = Enum.Font.Gotham
-        placeholder.TextSize = 16
+        placeholder.TextSize = isMobile and 12 or 16
         placeholder.TextColor3 = COLORS.TextDim
         placeholder.Parent = ContentFrame
     end
@@ -779,13 +785,13 @@ UserInputService.InputChanged:Connect(function(input)
 end)
 
 ResizeHandle.MouseEnter:Connect(function()
-    TweenObject(ResizeHandle, {Size = UDim2.new(0, 25, 0, 25)}, 0.2)
+    TweenObject(ResizeHandle, {Size = UDim2.new(0, isMobile and 20 or 25, 0, isMobile and 20 or 25)}, 0.2)
     TweenObject(ResizeHandle, {BackgroundColor3 = Color3.fromRGB(55, 150, 255)}, 0.2)
 end)
 
 ResizeHandle.MouseLeave:Connect(function()
     if not resizing then
-        TweenObject(ResizeHandle, {Size = UDim2.new(0, 20, 0, 20)}, 0.2)
+        TweenObject(ResizeHandle, {Size = UDim2.new(0, isMobile and 16 or 20, 0, isMobile and 16 or 20)}, 0.2)
         TweenObject(ResizeHandle, {BackgroundColor3 = COLORS.Accent}, 0.2)
     end
 end)
@@ -806,7 +812,7 @@ local function ToggleGUI()
         
         FloatingHideButton.Size = UDim2.new(0, 0, 0, 0)
         FloatingHideButton.Visible = true
-        TweenObject(FloatingHideButton, {Size = UDim2.new(0, 50, 0, 50)}, 0.3, Enum.EasingStyle.Back, Enum.EasingDirection.Out)
+        TweenObject(FloatingHideButton, {Size = UDim2.new(0, isMobile and 45 or 50, 0, isMobile and 45 or 50)}, 0.3, Enum.EasingStyle.Back, Enum.EasingDirection.Out)
     else
         TweenObject(FloatingHideButton, {Size = UDim2.new(0, 0, 0, 0)}, 0.3, Enum.EasingStyle.Back, Enum.EasingDirection.In)
         task.wait(0.3)
@@ -834,7 +840,6 @@ end)
 -- FLOATING BUTTON DRAG SYSTEM (FIXED)
 local floatingDragging = false
 local floatingDragStart, floatingStartPos
-local floatingDragConnection
 
 FloatingHideButton.InputBegan:Connect(function(input)
     if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
@@ -874,16 +879,17 @@ UserInputService.TouchEnded:Connect(function(input, gameProcessed)
 end)
 
 FloatingHideButton.MouseEnter:Connect(function()
-    TweenObject(FloatingHideButton, {Size = UDim2.new(0, 55, 0, 55)}, 0.2)
+    TweenObject(FloatingHideButton, {Size = UDim2.new(0, isMobile and 50 or 55, 0, isMobile and 50 or 55)}, 0.2)
     TweenObject(FloatingHideButton, {BackgroundColor3 = Color3.fromRGB(55, 150, 255)}, 0.2)
 end)
 
 FloatingHideButton.MouseLeave:Connect(function()
     if not floatingDragging then
-        TweenObject(FloatingHideButton, {Size = UDim2.new(0, 50, 0, 50)}, 0.2)
+        TweenObject(FloatingHideButton, {Size = UDim2.new(0, isMobile and 45 or 50, 0, isMobile and 45 or 50)}, 0.2)
         TweenObject(FloatingHideButton, {BackgroundColor3 = COLORS.Accent}, 0.2)
     end
 end)
 
 print("Kemerus Hub v3.0 loaded!")
 print("Key: KEMERUS31")
+print("Mobile Mode: " .. tostring(isMobile))
