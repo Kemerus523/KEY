@@ -441,7 +441,6 @@ local function CreateCreditsContent()
     local isSmall = MainFrame.Size.X.Offset < 600
     
     local creditsContainer = Instance.new("Frame")
-    creditsContainer.Name = "CreditsContainer"
     creditsContainer.Size = UDim2.new(1, 0, 1, 0)
     creditsContainer.BackgroundTransparency = 1
     creditsContainer.Parent = ContentFrame
@@ -727,6 +726,15 @@ TopBar.InputBegan:Connect(function(input)
         dragging = true
         dragStart = input.Position
         startPos = MainFrame.Position
+        
+        -- Monitor input ini saja sampai selesai
+        local connection
+        connection = input.Changed:Connect(function()
+            if input.UserInputState == Enum.UserInputState.End then
+                dragging = false
+                connection:Disconnect()
+            end
+        end)
     end
 end)
 
@@ -764,10 +772,10 @@ UserInputService.InputChanged:Connect(function(input)
 end)
 
 ResizeHandle.InputEnded:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+    if (input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch) then
         resizing = false
         if SelectedTab == "Credits" then
-            CreateCreditsContent()  -- Refresh credits saat resize selesai
+            CreateCreditsContent()
         end
     end
 end)
