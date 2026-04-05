@@ -1,0 +1,317 @@
+-- ESP Drawing Container
+local ESPContainer = Instance.new("Folder")
+ESPContainer.Name = "ESPContainer"
+ESPContainer.Parent = ScreenGui
+
+-- Utility Functions
+local function CreateUICorner(radius)
+    local corner = Instance.new("UICorner")
+    corner.CornerRadius = UDim.new(0, radius)
+    return corner
+end
+
+local function CreateUIStroke(color, thickness)
+    local stroke = Instance.new("UIStroke")
+    stroke.Color = color
+    stroke.Thickness = thickness
+    stroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+    return stroke
+end
+
+local function TweenObject(object, properties, duration, style, direction)
+    local tweenInfo = TweenInfo.new(duration or 0.3, style or Enum.EasingStyle.Quad, direction or Enum.EasingDirection.Out)
+    local tween = TweenService:Create(object, tweenInfo, properties)
+    tween:Play()
+    return tween
+end
+
+-- Color Conversion Functions
+local function RGBToHSV(r, g, b)
+    r, g, b = r / 255, g / 255, b / 255
+    local max = math.max(r, g, b)
+    local min = math.min(r, g, b)
+    local delta = max - min
+    
+    local h, s, v = 0, 0, max
+    
+    if delta ~= 0 then
+        s = delta / max
+        if max == r then
+            h = ((g - b) / delta) % 6
+        elseif max == g then
+            h = (b - r) / delta + 2
+        else
+            h = (r - g) / delta + 4
+        end
+        h = h / 6
+    end
+    
+    return h, s, v
+end
+
+local function HSVToRGB(h, s, v)
+    local c = v * s
+    local x = c * (1 - math.abs((h * 6) % 2 - 1))
+    local m = v - c
+    
+    local r, g, b = 0, 0, 0
+    
+    if h < 1/6 then
+        r, g, b = c, x, 0
+    elseif h < 2/6 then
+        r, g, b = x, c, 0
+    elseif h < 3/6 then
+        r, g, b = 0, c, x
+    elseif h < 4/6 then
+        r, g, b = 0, x, c
+    elseif h < 5/6 then
+        r, g, b = x, 0, c
+    else
+        r, g, b = c, 0, x
+    end
+    
+    return Color3.new(r + m, g + m, b + m)
+end
+
+-- ESP Functions
+local function GetPlayerInventory(player)
+    local inventory = {}
+    
+    -- Try to get tools from Backpack
+    if player:FindFirstChild("Backpack") then
+        for _, item in pairs(player.Backpack:GetChildren()) do
+            if item:IsA("Tool") then
+                table.insert(inventory, item.Name)
+            end
+        end
+    end
+    
+    -- Try to get equipped tool
+    if player.Character then
+        for _, item in pairs(player.Character:GetChildren()) do
+            if item:IsA("Tool") then
+                table.insert(inventory, item.Name .. " (Equipped)")
+            end
+        end
+    end
+    
+    return inventory
+end
+
+local function CreateESP(player)
+    if player == LocalPlayer then return end
+    
+    local esp = {
+        Player = player,
+        Drawings = {}
+    }
+    
+    -- Box
+    local box = Drawing.new("Square")
+    box.Visible = false
+    box.Color = ESPSettings.BoxColor
+    box.Thickness = 2
+    box.Transparency = 1
+    box.Filled = false
+    esp.Drawings.Box = box
+    
+    -- Tracer
+    local tracer = Drawing.new("Line")
+    tracer.Visible = false
+    tracer.Color = ESPSettings.TracerColor
+    tracer.Thickness = 2
+    tracer.Transparency = 1
+    esp.Drawings.Tracer = tracer
+    
+    -- Health Bar Background
+    local healthBarBG = Drawing.new("Square")
+    healthBarBG.Visible = false
+    healthBarBG.Color = Color3.fromRGB(0, 0, 0)
+    healthBarBG.Thickness = 1
+    healthBarBG.Transparency = 0.5
+    healthBarBG.Filled = true
+    esp.Drawings.HealthBarBG = healthBarBG
+    
+    -- Health Bar
+    local healthBar = Drawing.new("Square")
+    healthBar.Visible = false
+    healthBar.Color = ESPSettings.HealthBarColor
+    healthBar.Thickness = 1
+    healthBar.Transparency = 1
+    healthBar.Filled = true
+    esp.Drawings.HealthBar = healthBar
+    
+    -- Distance Text
+    local distanceText = Drawing.new("Text")
+    distanceText.Visible = false
+    distanceText.Color = Color3.fromRGB(255, 255, 255)
+    distanceText.Size = 14
+    distanceText.Center = true
+    distanceText.Outline = true
+    distanceText.OutlineColor = Color3.fromRGB(0, 0, 0)
+    distanceText.Font = 2
+    esp.Drawings.DistanceText = distanceText
+    
+    -- Inventory Text
+    local inventoryText = Drawing.new("Text")
+    inventoryText.Visible = false
+    inventoryText.Color = Color3.fromRGB(200, 200, 200)
+    inventoryText.Size = 12
+    inventoryText.Center = true
+    inventoryText.Outline = true
+    inventoryText.OutlineColor = Color3.fromRGB(0, 0, 0)
+    inventoryText.Font = 2
+    esp.Drawings.InventoryText = inventoryText
+    
+    ESPObjects[player] = esp
+end
+
+local function RemoveESP(player)
+    local esp = ESPObjects[player]
+    if esp then
+        for _, drawing in pairs(esp.Drawings) do
+            drawing:Remove()
+        end
+        ESPObjects[player] = nil
+    end
+end
+
+local function UpdateESP()
+    -- FIX: Langsung return jika disabled, tidak freeze
+    if not ESPSettings.Enabled then
+        for _, esp in pairs(ESPObjects) do
+            for _, drawing in pairs(esp.Drawings) do
+                drawing.Visible = false
+            end
+        end
+        return
+    end
+    
+    for player, esp in pairs(ESPObjects) do
+        if player and player.Character and player.Character:FindFirstChild("HumanoidRootPart") and player.Character:FindFirstChild("Humanoid") then
+            local hrp = player.Character.HumanoidRootPart
+            local humanoid = player.Character.Humanoid
+            local head = player.Character:FindFirstChild("Head")
+            
+            -- Check if on screen
+            local vector, onScreen = Camera:WorldToViewportPoint(hrp.Position)
+            
+            if onScreen then
+                -- Calculate box size
+                local headPos = Camera:WorldToViewportPoint(head.Position + Vector3.new(0, 0.5, 0))
+                local legPos = Camera:WorldToViewportPoint(hrp.Position - Vector3.new(0, 3, 0))
+                
+                local height = math.abs(headPos.Y - legPos.Y)
+                local width = height / 2
+                
+                -- Update Box
+                if ESPSettings.Box then
+                    esp.Drawings.Box.Size = Vector2.new(width, height)
+                    esp.Drawings.Box.Position = Vector2.new(vector.X - width / 2, vector.Y - height / 2)
+                    esp.Drawings.Box.Color = ESPSettings.BoxColor
+                    esp.Drawings.Box.Visible = true
+                else
+                    esp.Drawings.Box.Visible = false
+                end
+                
+                -- Update Tracer
+                if ESPSettings.Tracer then
+                    esp.Drawings.Tracer.From = Vector2.new(Camera.ViewportSize.X / 2, Camera.ViewportSize.Y)
+                    esp.Drawings.Tracer.To = Vector2.new(vector.X, vector.Y)
+                    esp.Drawings.Tracer.Color = ESPSettings.TracerColor
+                    esp.Drawings.Tracer.Visible = true
+                else
+                    esp.Drawings.Tracer.Visible = false
+                end
+                
+                -- Update Health Bar
+                if ESPSettings.HealthBar then
+                    local healthPercentage = humanoid.Health / humanoid.MaxHealth
+                    local barHeight = height
+                    local barWidth = 4
+                    
+                    esp.Drawings.HealthBarBG.Size = Vector2.new(barWidth, barHeight)
+                    esp.Drawings.HealthBarBG.Position = Vector2.new(vector.X - width / 2 - barWidth - 2, vector.Y - height / 2)
+                    esp.Drawings.HealthBarBG.Visible = true
+                    
+                    esp.Drawings.HealthBar.Size = Vector2.new(barWidth, barHeight * healthPercentage)
+                    esp.Drawings.HealthBar.Position = Vector2.new(vector.X - width / 2 - barWidth - 2, vector.Y - height / 2 + (barHeight * (1 - healthPercentage)))
+                    esp.Drawings.HealthBar.Color = ESPSettings.HealthBarColor
+                    esp.Drawings.HealthBar.Visible = true
+                else
+                    esp.Drawings.HealthBarBG.Visible = false
+                    esp.Drawings.HealthBar.Visible = false
+                end
+                
+                -- Update Distance
+                if ESPSettings.Distance then
+                    local distance = math.floor((LocalPlayer.Character.HumanoidRootPart.Position - hrp.Position).Magnitude)
+                    esp.Drawings.DistanceText.Text = distance .. "m"
+                    esp.Drawings.DistanceText.Position = Vector2.new(vector.X, vector.Y - height / 2 - 15)
+                    esp.Drawings.DistanceText.Visible = true
+                else
+                    esp.Drawings.DistanceText.Visible = false
+                end
+                
+                -- Update Inventory
+                if ESPSettings.Inventory then
+                    local inventory = GetPlayerInventory(player)
+                    if #inventory > 0 then
+                        esp.Drawings.InventoryText.Text = table.concat(inventory, ", ")
+                        esp.Drawings.InventoryText.Position = Vector2.new(vector.X, vector.Y + height / 2 + 5)
+                        esp.Drawings.InventoryText.Visible = true
+                    else
+                        esp.Drawings.InventoryText.Visible = false
+                    end
+                else
+                    esp.Drawings.InventoryText.Visible = false
+                end
+            else
+                -- Not on screen
+                for _, drawing in pairs(esp.Drawings) do
+                    drawing.Visible = false
+                end
+            end
+        else
+            -- Character not found
+            for _, drawing in pairs(esp.Drawings) do
+                drawing.Visible = false
+            end
+        end
+    end
+end
+
+-- Initialize ESP for existing players
+for _, player in pairs(Players:GetPlayers()) do
+    CreateESP(player)
+end
+
+-- Handle new players
+Players.PlayerAdded:Connect(CreateESP)
+Players.PlayerRemoving:Connect(RemoveESP)
+
+-- FIX: Disconnect old connection jika ada
+local function StartESP()
+    if ESPUpdateConnection then
+        ESPUpdateConnection:Disconnect()
+    end
+    ESPUpdateConnection = RunService.RenderStepped:Connect(UpdateESP)
+end
+
+-- FIX: Stop ESP properly
+local function StopESP()
+    if ESPUpdateConnection then
+        ESPUpdateConnection:Disconnect()
+        ESPUpdateConnection = nil
+    end
+    
+    -- Hide all drawings
+    for _, esp in pairs(ESPObjects) do
+        for _, drawing in pairs(esp.Drawings) do
+            drawing.Visible = false
+        end
+    end
+end
+
+-- Start ESP initially
+StartESP()
